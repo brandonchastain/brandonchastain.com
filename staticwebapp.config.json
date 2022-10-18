@@ -12,4 +12,8 @@
     "rewrite": "index.html",
     "exclude": ["/img/*.{png,jpg,gif}", "/css/*"]
   },
+  "mimeTypes": {
+    ".jpg": "image/jpg",
+    ".jpeg": "image/jpg"
+  }
 }
