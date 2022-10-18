@@ -1,0 +1,15 @@
+{
+  "trailingSlash": "auto",
+  "routes": [
+    {
+      "route": "/img/*",
+      "headers": {
+        "cache-control": "must-revalidate, max-age=15770000"
+      }
+    },
+  ],
+  "navigationFallback": {
+    "rewrite": "index.html",
+    "exclude": ["/img/*.{png,jpg,gif}", "/css/*"]
+  },
+}
