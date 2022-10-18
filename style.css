@@ -5,3 +5,17 @@ p {
 img {
     cursor: zoom-in;
 }
+
+div.content p {
+    width: 50%;
+    margin-bottom: 50;
+}
+
+body {
+    background-color: #131516;
+    color: #d8d4cf;
+}
+
+a:visited {
+    color: #9b6fec;
+}
