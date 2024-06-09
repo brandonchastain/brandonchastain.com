@@ -14,8 +14,7 @@ img {
 
 /* For mobile phones: */
 [class*="col-"] {
-    width: 100%;
-    max-width: 100% !important;
+    width: 95%;
 }
   
 @media only screen and (min-width: 768px) {
