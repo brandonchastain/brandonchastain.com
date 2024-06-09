@@ -1,21 +1,56 @@
-p {
-    font-family: Courier 'Courier New', Courier, monospace;
+body {
+    font-family: 'Verdana';
+    background-color: #345345;
+    color: #cccccc;
 }
 
 img {
     cursor: zoom-in;
+    text-align: center;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+/* For mobile phones: */
+[class*="col-"] {
+    width: 100%;
+}
+  
+@media only screen and (min-width: 768px) {
+    /* For desktop: */
+    .col-1 {width: 8.33%;}
+    .col-2 {width: 16.66%;}
+    .col-3 {width: 25%;}
+    .col-4 {width: 33.33%;}
+    .col-5 {width: 41.66%;}
+    .col-6 {width: 50%;}
+    .col-7 {width: 58.33%;}
+    .col-8 {width: 66.66%;}
+    .col-9 {width: 75%;}
+    .col-10 {width: 83.33%;}
+    .col-11 {width: 91.66%;}
+    .col-12 {width: 100%;}
+}
+
+/* For mobile phones: */
+body {
+    font-size: 18pt;
+}
+  
+@media only screen and (min-width: 768px) {
+    /* For desktop: */
+    body {font-size: 12pt;}
+}
+
+div.content {
+    margin-left: auto;
+    margin-right: auto;
 }
 
 div.content p {
-    width: 50%;
     margin-bottom: 50;
 }
 
-body {
-    background-color: #131516;
-    color: #d8d4cf;
-}
-
-a:visited {
-    color: #9b6fec;
+a, a:visited {
+    color: #6ea661;
 }
