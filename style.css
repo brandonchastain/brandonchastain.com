@@ -14,7 +14,7 @@ img {
 
 /* For mobile phones: */
 [class*="col-"] {
-    width: 95%;
+    width: 90%;
 }
   
 @media only screen and (min-width: 768px) {
