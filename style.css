@@ -1,7 +1,7 @@
 body {
     font-family: 'Verdana';
-    background-color: #345345;
     color: #cccccc;
+    background-color: #345345;
 }
 
 img {
@@ -42,10 +42,24 @@ body {
     body {font-size: 12pt;}
 }
 
+body {
+    height: 100%;
+    margin: 0;
+    padding: 0;
+    background-attachment: fixed;
+    background-size: cover;
+}
+
 div.content {
-    margin-left: auto;
-    margin-right: auto;
-    background-color: #cccccc;
+    background-attachment: fixed;
+    padding-top: 1em;
+    padding-bottom: 1em;
+    padding-left: 1em;
+    padding-right: 1em;
+    margin: auto;
+    background-color: #313834;
+    height: auto;
+    overflow: visible;
 }
 
 div.content p {
