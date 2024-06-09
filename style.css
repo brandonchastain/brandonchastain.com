@@ -10,6 +10,7 @@ img {
     margin-left: auto;
     margin-right: auto;
     width: 100%;
+    display: block;
 }
 
 /* For mobile phones: */
