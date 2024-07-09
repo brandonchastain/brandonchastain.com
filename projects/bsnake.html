@@ -58,17 +58,17 @@
 		<p>
 			Per my understanding, one limitation of using the Blazor canvas is that I must trigger a canvas re-paint
 			using the standard Javascript requestAnimationFrame() method. That means I can't have a pure C# game,
-			but I have to use a little dash of JS to the wheels turning. From <strong>src/BlazorClient/wwwroot/index.html</strong>
+			but I have to use a little dash of JS to get the wheels turning. From <strong>src/BlazorClient/wwwroot/index.html</strong>
 		</p>
 
-<pre><code class="language-javascript">function gameLoop(timestamp)
+<pre><code class="language-javascript">// The game loop
+function gameLoop(timestamp)
 {
 	window.theInstance.invokeMethodAsync("GameLoopStep", timestamp);
 	window.requestAnimationFrame(gameLoop);
 }
 
-// Initializing the JS game loop.
-// 
+// Game loop initialization code (will be invoked by our C# at startup). 
 window.initRenderJS = (instance) => {
 	window.theInstance = instance;
 	window.requestAnimationFrame(renderJS);
@@ -76,42 +76,63 @@ window.initRenderJS = (instance) => {
 </code></pre>
 
 <p>
-Then in my Blazor component <strong>src/Pages/Index.razor</strong>, I my C# game update method. The initialization below 
+Then in my Blazor component <strong>src/Pages/Index.razor</strong>, I call my C# game loop method. The initialization below 
 sets up the first call to the JS game loop.
 </p>
 
-<pre><code class="language-cs">public async ValueTask GameLoopStep(float ts)
+<pre><code class="language-cs">// The C# portion of the game loop (game and rendering logic is implemented by these objects)
+public async ValueTask GameLoopStep(float ts)
 {
 	// Update game
 	Game.Tick(ts);
 
 	// render graphics to canvas
-	await Drawer.Draw(Game);
+	await Drawer.Draw(Game.GetState());
 }
 
+// This is called when the blazor canvas renders.
+// It initializes the game if needed and kicks off the JS game loop.
 public async ValueTask OnRenderAsync(bool firstRender)
 {
 	if (Game == null)
 	{
 		var repo = new HighScoreRepository(logger, Client);
 		Game = new SnakeGame(logger, repo);
+		Drawer = new BlazorDrawer();
 	}
 
 	this.ctx = await _canvasReference.CreateCanvas2DAsync();
-	await JsRuntime.InvokeAsync&lt;object&gt;("initRenderJS", DotNetObjectReference.Create(this));
+	await JsRuntime.InvokeAsync<object>("initRenderJS", DotNetObjectReference.Create(this));
 	await base.OnInitializedAsync();
 }
 </code></pre>
 
 		<p>
-			For more details, see this <a href="https://swharden.com/blog/2021-01-07-blazor-canvas-animated-graphics/">great guide by Scott W Harden</a> on creating a game loop with Blazor.
+			For more details on the game loop, see this <a href="https://swharden.com/blog/2021-01-07-blazor-canvas-animated-graphics/">great guide by Scott W Harden</a> on creating a game loop with Blazor.
 		</p>
 
 		<h3>Handling player input</h3>
 		<p>
 			I used the Blazor canvas component's OnKeydown event handler to capture user key presses. A
-			PlayerInput class handles the key presses by changing the game state.
+			PlayerInput class handles the key presses by keeping them in its state, and the game
+			will check what the player's current input is during each iteration of the game loop.
 		</p>
+<pre><code class="language-cs">
+	<div 
+		id="brandonContainer"
+    	tabindex="0"
+    	@onclick="Clicked"
+    	@onkeydown="OnKeyDown">
+        <BECanvas Width="600" Height="400" @ref="_canvasReference"></BECanvas>
+	</div>
+</code></pre>
+
+<pre><code class="language-cs">
+	public void OnKeyDown(KeyboardEventArgs e)
+	{
+        Game.playerInput.OnKeyDown(e.Code);
+    }
+</code></pre>
 		<p>
 			Touch screen interactions are captured by a separate Javascript touch listener, which translates
 			those swipes into equivalent keyboard key presses. Those translated key presses get forwarded to the
