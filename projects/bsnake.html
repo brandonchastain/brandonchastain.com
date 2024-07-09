@@ -117,21 +117,19 @@ public async ValueTask OnRenderAsync(bool firstRender)
 			PlayerInput class handles the key presses by keeping them in its state, and the game
 			will check what the player's current input is during each iteration of the game loop.
 		</p>
-<pre><code class="language-cs">
-	<div 
-		id="brandonContainer"
-    	tabindex="0"
-    	@onclick="Clicked"
-    	@onkeydown="OnKeyDown">
-        <BECanvas Width="600" Height="400" @ref="_canvasReference"></BECanvas>
-	</div>
+<pre><code class="language-html"><div 
+	id="brandonContainer"
+	tabindex="0"
+	@onclick="Clicked"
+	@onkeydown="OnKeyDown">
+	<BECanvas Width="600" Height="400" @ref="_canvasReference"></BECanvas>
+</div>
 </code></pre>
 
-<pre><code class="language-cs">
-	public void OnKeyDown(KeyboardEventArgs e)
-	{
-        Game.playerInput.OnKeyDown(e.Code);
-    }
+<pre><code class="language-cs">public void OnKeyDown(KeyboardEventArgs e)
+{
+	Game.playerInput.OnKeyDown(e.Code);
+}
 </code></pre>
 		<p>
 			Touch screen interactions are captured by a separate Javascript touch listener, which translates
@@ -143,7 +141,7 @@ public async ValueTask OnRenderAsync(bool firstRender)
 		<h3>High Scores</h3>
 		<p>
 			To give B SNAKE an old-school pinball machine vibe, I built a high score leaderboard displaying the
-			champs' 3 initials. The user can press H or tap on the “High Score” text to see the leaderboard. The
+			champs' 3 initials. The user can press H or tap on the "High Score" text to see the leaderboard. The
 			scores are stored in a cloud storage database and are retrieved by the game client using an HTTP
 			request to the backend service. In my case, this backend service is hosted as an Azure Function.
 		</p>
