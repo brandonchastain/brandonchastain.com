@@ -190,7 +190,7 @@ public async ValueTask OnRenderAsync(bool firstRender)
 <script>hljs.initHighlightingOnLoad();</script>
 <script>
 document.querySelectorAll("code").forEach(function(element) {
-    element.innerHTML = element.innerHTML.replace(/&/g, "&amp;").replace(/</g, "<").replace(/>/g, ">").replace(/"/g, "&quot;").replace(/'/g, "&#039;");
+	element.innerHTML = element.innerHTML.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;").replace(/'/g, "&#039;");
 });
 //hljs.highlightAll();
 </script>
