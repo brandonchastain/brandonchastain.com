@@ -107,7 +107,7 @@ public async ValueTask OnRenderAsync(bool firstRender)
 	}
 
 	this.ctx = await _canvasReference.CreateCanvas2DAsync();
-	await JsRuntime.InvokeAsync<object>("initRenderJS", DotNetObjectReference.Create(this));
+	await JsRuntime.InvokeAsync&lt;object&gt;("initRenderJS", DotNetObjectReference.Create(this));
 	await base.OnInitializedAsync();
 }
 </code></pre>
