@@ -22,6 +22,11 @@
 	yourself you lose!
 </p>
 
+<h2>Source code</h2>
+<p>
+	<a href="https://github.com/brandonchastain/SnakeBlazor">Github</a>
+</p>
+
 <h2>Developer Log</h2>
 <p>
 	I haven't made a game in years, so recently I decided to create my own game as a side project.
@@ -76,8 +81,8 @@ window.initRenderJS = (instance) => {
 </code></pre>
 
 <p>
-Then in my Blazor component <strong>src/Pages/Index.razor</strong>, I call my C# game loop method. The initialization below 
-sets up the first call to the JS game loop.
+Then in my Blazor component <strong>src/Pages/Index.razor</strong>, I implement the game loop code in C#.
+The method below sets up the first call to the JS game loop.
 </p>
 
 <pre><code class="language-cs">// The C# portion of the game loop (game and rendering logic is implemented by these objects)
@@ -140,7 +145,7 @@ public async ValueTask OnRenderAsync(bool firstRender)
 
 <h3>High Scores</h3>
 <p>
-	To give B SNAKE an old-school pinball machine vibe, I built a high score leaderboard displaying the
+	To give B SNAKE an old-school arcade machine vibe, I built a high score leaderboard displaying the
 	champs' 3 initials. The user can press H or tap on the "High Score" text to see the leaderboard. The
 	scores are stored in a cloud storage database and are retrieved by the game client using an HTTP
 	request to the backend service. In my case, this backend service is hosted as an Azure Function.
@@ -163,8 +168,9 @@ public async ValueTask OnRenderAsync(bool firstRender)
 <p>
 	I played other versions of Snake without these annoyances and made small adjustments in my version.
 	I gave the snake the ability to wrap-around the edges of the screen, which actually made it way more
-	fun. I also added a guard clause to the input handling that prevents turning 180-degrees if it would
-	cause the snake to die. With these 2 fixes, B SNAKE is surprisingly playable and fun.
+	fun as the player finds new ways to dodge in around their growing snake. I also prevented 
+    dying after a 180-degree turn by adding code to ignore the turn if it would make the snake
+	collide with itself. With these 2 fixes, B SNAKE is surprisingly playable and fun.
 </p>
 
 <h3>Conclusion</h3>
