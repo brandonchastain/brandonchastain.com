@@ -190,7 +190,205 @@ public async ValueTask OnRenderAsync(bool firstRender)
 <script>hljs.initHighlightingOnLoad();</script>
 <script>
 document.querySelectorAll("code").forEach(function(element) {
-	element.innerHTML = element.innerHTML.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;").replace(/'/g, "&#039;");
+<html>
+
+<head>
+	<link rel="stylesheet" href="../../style.css">
+	<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+	<link rel="stylesheet" href="../../dracula.css">
+	<!--<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/default.min.css">-->
+</head>
+
+<body>
+<div class="content col-6">
+<a href="../../projects.html">Back to projects</a>
+<h1>B SNAKE</h1>
+
+<img src="../../img/eldorado/IMG_0037.gif">
+
+<h2>How to play</h2>
+<p>
+	<a href="https://snake.brandonchastain.com/">Play the game here</a>
+</p>
+<p>
+	Swipe the touch screen or use arrow keys to change the snake's direction. Score by eating apples. If you eat
+	yourself you lose!
+</p>
+
+<h2>Source code</h2>
+<p>
+	<a href="https://github.com/brandonchastain/SnakeBlazor">Github</a>
+</p>
+
+<h2>Developer Log</h2>
+<p>
+	I haven't made a game in years, so recently I decided to create my own game as a side project.
+	Inspired by the little games on my TI-89 calculator that I used to play in math class, I decided to
+	build my own version of a classic game snake, titled: B SNAKE.
+</p>
+<p>
+	One goal I had for this game was to be playable from both PC and mobile clients. With Blazor
+	WebAssembly, a platform for running .NET in the web browser, I could feasibly write a game in C#
+	that could be played by users on a PC or a smart phone.
+</p>
+
+<h3>Wait, how do I draw things?</h3>
+<p>
+	I needed a way to programmatically draw rectangles and text to the screen with Blazor. I found the
+	Blazor Canvas Extension, which provides C# library methods to draw 2D graphics in an HTML 5 canvas
+	element.
+</p>
+
+<h3>Game loop basics</h3>
+<p>
+	I had to write my first game loop. I refreshed my memory and remembered that this goes something
+	like this:
+</p>
+<pre><code class="language-cs">while (isRunning)
+{
+	readInput();
+	updateGame();
+	renderGraphics();
+}
+</code></pre>
+
+<h3>Growing pains</h3>
+<p>
+	Per my understanding, one limitation of using the Blazor canvas is that I must trigger a canvas re-paint
+	using the standard Javascript requestAnimationFrame() method. That means I can't have a pure C# game,
+	but I have to use a little dash of JS to get the wheels turning. From <strong>src/BlazorClient/wwwroot/index.html</strong>
+</p>
+
+<pre><code class="language-javascript">// The game loop
+function gameLoop(timestamp)
+{
+	window.theInstance.invokeMethodAsync("GameLoopStep", timestamp);
+	window.requestAnimationFrame(gameLoop);
+}
+
+// Game loop initialization code (will be invoked by our C# at startup). 
+window.initRenderJS = (instance) => {
+	window.theInstance = instance;
+	window.requestAnimationFrame(renderJS);
+};
+</code></pre>
+
+<p>
+Then in my Blazor component <strong>src/Pages/Index.razor</strong>, I implement the game loop code in C#.
+The method below sets up the first call to the JS game loop.
+</p>
+
+<pre><code class="language-cs">// The C# portion of the game loop (game and rendering logic is implemented by these objects)
+public async ValueTask GameLoopStep(float ts)
+{
+	// Update game
+	Game.Tick(ts);
+
+	// render graphics to canvas
+	await Drawer.Draw(Game.GetState());
+}
+
+// This is called when the blazor canvas renders.
+// It initializes the game if needed and kicks off the JS game loop.
+public async ValueTask OnRenderAsync(bool firstRender)
+{
+	if (Game == null)
+	{
+		var repo = new HighScoreRepository(logger, Client);
+		Game = new SnakeGame(logger, repo);
+		Drawer = new BlazorDrawer();
+	}
+
+	this.ctx = await _canvasReference.CreateCanvas2DAsync();
+	await JsRuntime.InvokeAsync&lt;object&gt;("initRenderJS", DotNetObjectReference.Create(this));
+	await base.OnInitializedAsync();
+}
+</code></pre>
+
+<p>
+	For more details on the game loop, see this <a href="https://swharden.com/blog/2021-01-07-blazor-canvas-animated-graphics/">great guide by Scott W Harden</a> on creating a game loop with Blazor.
+</p>
+
+<h3>Handling player input</h3>
+<p>
+	I used the Blazor canvas component's OnKeydown event handler to capture user key presses. A
+	PlayerInput class handles the key presses by keeping them in its state, and the game
+	will check what the player's current input is during each iteration of the game loop.
+</p>
+<pre><code class="language-html"><div 
+	id="brandonContainer"
+	tabindex="0"
+	@onclick="Clicked"
+	@onkeydown="OnKeyDown">
+	<BECanvas Width="600" Height="400" @ref="_canvasReference"></BECanvas>
+</div>
+</code></pre>
+
+<pre><code class="language-cs">public void OnKeyDown(KeyboardEventArgs e)
+{
+	Game.playerInput.OnKeyDown(e.Code);
+}
+</code></pre>
+<p>
+	Touch screen interactions are captured by a separate Javascript touch listener, which translates
+	those swipes into equivalent keyboard key presses. Those translated key presses get forwarded to the
+	game for handling. In the future, it'd be ideal to include this in the C# implementation instead of
+	the wrapper Javascript.
+</p>
+
+<h3>High Scores</h3>
+<p>
+	To give B SNAKE an old-school arcade machine vibe, I built a high score leaderboard displaying the
+	champs' 3 initials. The user can press H or tap on the "High Score" text to see the leaderboard. The
+	scores are stored in a cloud storage database and are retrieved by the game client using an HTTP
+	request to the backend service. In my case, this backend service is hosted as an Azure Function.
+</p>
+
+<h3>User Acceptance Testing</h3>
+<p>
+	After handing the game to my friends, they said it was too easy to die. They reported top annoying
+	causes of death:
+</p>
+<ul>
+	<li>
+		When users hit the wall, they expected to wrap around the screen, but instead they died.
+	</li>
+	<li>
+		If users turned back in the opposite direction of the snake, they immediately died when the
+		snake collided with itself.
+	</li>
+</ul>
+<p>
+	I played other versions of Snake without these annoyances and made small adjustments in my version.
+	I gave the snake the ability to wrap-around the edges of the screen, which actually made it way more
+	fun as the player finds new ways to dodge in and around their growing snake. I also prevented 
+    dying after a 180-degree turn by adding code to ignore the turn if it would make the snake
+	collide with itself. With these 2 fixes, B SNAKE is surprisingly playable and fun.
+</p>
+
+<h3>Conclusion</h3>
+<p>
+	B SNAKE is a success in my book. It was a fun challenge that got me familiar with Blazor and with
+	making my own games from scratch. As I build more projects, I'm hoping to keep learning more game
+	dev and software design techniques that make it easier to for me to build more advanced games in the
+	future. Thanks for reading!
+</p>
+</div>
+
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/csharp.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/javascript.min.js"></script>
+<script>hljs.initHighlightingOnLoad();</script>
+<script>
+document.querySelectorAll("code").forEach(function(element) {
+    element.innerHTML = element.innerHTML.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;").replace(/'/g, "&#039;");
+});
+//hljs.highlightAll();
+</script>
+
+</body>
+</html>
 });
 //hljs.highlightAll();
 </script>
