@@ -58,10 +58,9 @@
 		<p>
 			Per my understanding, one limitation of using the Blazor canvas is that I must trigger a canvas re-paint
 			using the standard Javascript requestAnimationFrame() method. That means I can't have a pure C# game,
-			but I have to use a little dash of JS to the wheels turning.
-<p>		
-From <strong>src/BlazorClient/wwwroot/index.html</strong>
-</p>
+			but I have to use a little dash of JS to the wheels turning. From <strong>src/BlazorClient/wwwroot/index.html</strong>
+		</p>
+
 <pre><code class="language-javascript">function gameLoop(timestamp)
 {
 	window.theInstance.invokeMethodAsync("GameLoopStep", timestamp);
@@ -75,10 +74,12 @@ window.initRenderJS = (instance) => {
 	window.requestAnimationFrame(renderJS);
 };
 </code></pre>
+
 <p>
 Then in my Blazor component <strong>src/Pages/Index.razor</strong>, I my C# game update method. The initialization below 
 sets up the first call to the JS game loop.
 </p>
+
 <pre><code class="language-cs">public async ValueTask GameLoopStep(float ts)
 {
 	// Update game
@@ -97,10 +98,11 @@ public async ValueTask OnRenderAsync(bool firstRender)
 	}
 
 	this.ctx = await _canvasReference.CreateCanvas2DAsync();
-	await JsRuntime.InvokeAsync<object>("initRenderJS", DotNetObjectReference.Create(this));
+	await JsRuntime.InvokeAsync&lt;object&gt;("initRenderJS", DotNetObjectReference.Create(this));
 	await base.OnInitializedAsync();
 }
 </code></pre>
+
 		<p>
 			For more details, see this <a href="https://swharden.com/blog/2021-01-07-blazor-canvas-animated-graphics/">great guide by Scott W Harden</a> on creating a game loop with Blazor.
 		</p>
