@@ -3,6 +3,7 @@
 <head>
 	<link rel="stylesheet" href="../../style.css">
 	<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/default.min.css">
 </head>
 
 <body>
@@ -43,8 +44,19 @@
 		<h3>Game loop basics</h3>
 		<p>
 			I had to write my first game loop. I refreshed my memory and remembered that this goes something
-			like while …. { readInput(); update(); render(); }. Referencing other Blazor game examples, I drove
-			this game loop with Javascript. For more details, see a quick guide on creating a proper JS game
+			like this:
+		</p>
+		<pre><code class="language-csharp">
+			while (isRunning)
+			{
+				readInput();
+				updateGame();
+				renderGraphics();
+			}
+		</code></pre>
+		<p>
+			Referencing other Blazor game examples, I drove
+			the game loop with Javascript. For more details, see a quick guide on creating a proper JS game
 			loop:
 			https://spicyyoghurt.com/tutorials/html5-javascript-game-development/create-a-proper-game-loop-with-requestanimationframe.
 		</p>
@@ -98,5 +110,12 @@
 			future. Thanks for reading!
 		</p>
 	</div>
+
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/csharp.min.js"></script>
+
+<script>hljs.highlightAll();</script>
+
 </body>
 </html>
