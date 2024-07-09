@@ -46,19 +46,68 @@
 			I had to write my first game loop. I refreshed my memory and remembered that this goes something
 			like this:
 		</p>
-		<pre><code class="language-cs">
-			while (isRunning)
-			{
-				readInput();
-				updateGame();
-				renderGraphics();
-			}
-		</code></pre>
+<pre><code class="language-cs">
+while (isRunning)
+{
+	readInput();
+	updateGame();
+	renderGraphics();
+}
+</code></pre>
+
+		<h3>Growing pains</h3>
+		<p>
+			As per my understanding, one limitation of using the Blazor canas is that I must trigger a canvas re-paint
+			using the standard Javascript requestAnimationFrame() method.
+		</p>
+
 		<p>
 			Referencing other Blazor game examples, I drove
-			the game loop with Javascript. For more details, see a quick guide on creating a proper JS game
-			loop:
-			https://spicyyoghurt.com/tutorials/html5-javascript-game-development/create-a-proper-game-loop-with-requestanimationframe.
+			the game loop with Javascript using requestAnimationFrame() to establish a loop.
+From <strong>src/BlazorClient/wwwroot/index.html</strong>
+<pre><code class="language-javascript">
+	function gameLoop(timestamp)
+	{
+		window.theInstance.invokeMethodAsync("GameLoopStep", timestamp);
+		window.requestAnimationFrame(gameLoop);
+	}
+
+	// Initializing the JS game loop.
+	// 
+	window.initRenderJS = (instance) => {
+		window.theInstance = instance;
+		window.requestAnimationFrame(renderJS);
+	};
+</code></pre>
+<p>
+Then in my Blazor component Index.razor, I my C# game update method. The initialization below 
+sets up the first call to the JS game loop.
+</p>
+<pre><code class="language-cs">
+	public async ValueTask GameLoopStep(float ts)
+	{
+		// Update game
+        Game.Tick(ts);
+
+		// render graphics to canvas
+		await Drawer.Draw(Game);
+	}
+
+	public async ValueTask OnRenderAsync(bool firstRender)
+	{
+		if (Game == null)
+		{
+			var repo = new HighScoreRepository(logger, Client);
+			Game = new SnakeGame(logger, repo);
+		}
+
+		this.ctx = await _canvasReference.CreateCanvas2DAsync();
+		await JsRuntime.InvokeAsync<object>("initRenderJS", DotNetObjectReference.Create(this));
+		await base.OnInitializedAsync();
+	}
+</code></pre>
+		<p>
+			For more details, see this <a href="https://swharden.com/blog/2021-01-07-blazor-canvas-animated-graphics/">great guide by Scott W Harden</a> on creating a game loop with Blazor.
 		</p>
 
 		<h3>Handling player input</h3>
@@ -113,7 +162,8 @@
 
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/cs.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/csharp.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/javascript.min.js"></script>
 
 <script>hljs.highlightAll();</script>
 
