@@ -52,12 +52,11 @@
 <h2>Developer Log</h2>
 <p>
   While making my previous game <a href="bsnake.html">B SNAKE</a>, I learned how fun and addicting it is to build games with C# and Blazor.
-  WebAssembly (WASM) is still pretty young tech, but there are lots of cool things it can accomplish.
-  It's also ultra-convenient. I get to program in the same language I use at work every day, 
-  and players get to play it on their phone or PC without installing anything.
+  WebAssembly (WASM) is ultra-convenient for me as a dev and for players. I get to program in the same language I use at work every day, 
+  and players can play a game on their phone or PC without installing anything.
 </p>
 <p>
-	After the making of B SNAKE, I realized I had a useful template for future games and that I had
+  After I completed B SNAKE, I realized I had a useful template for future games and that I had
   already gotten through the "absolute noob" stage of my gamedev journey.
   So, I used it to make more games!
 </p>
@@ -65,7 +64,11 @@
 <h3>Resurrecting my old Tetris game</h3>
 <p>
   I actually already built a Tetris clone in C# some years ago, but it ran in the console
-  and was rendered terribly by my custom <code>ConsoleTetrisRenderer</code> class. It became clear to me that
+  and was rendered terribly by my custom <code>ConsoleTetrisRenderer</code> class. 
+</p>
+<img src="../../img/oldTetris.jpg">
+<p>
+  It became clear to me that
   I could massively revamp the game's graphics and playability by adapting it to my new
   Blazor game template. Once the scaffolding was set up, all I'd need to do is create a new renderer
   implementation that draws to the Blazor HTML5 Canvas. And so I did that!
