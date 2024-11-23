@@ -23,7 +23,8 @@
         }
 
         (async () => {
-            document.getElementById("name").textContent = JSON.stringify(await getUserInfo());
+            var principal = await getUserInfo();
+            document.getElementById("name").textContent = principal.userDetails;
         })();
     </script>
 </body>
