@@ -12,6 +12,10 @@
       "redirect": "/.auth/login/github"
     },
     {
+      "route": "/logout",
+      "redirect": "/.auth/logout"
+    },
+    {
       "route": "/adminconsole",
       "allowedRoles": ["contributor"]
     }
