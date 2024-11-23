@@ -13,7 +13,7 @@
     },
     {
       "route": "/adminconsole",
-      "allowedRoles": "contributor" 
+      "allowedRoles": ["authenticated"]
     }
   ],
   "responseOverrides": {
