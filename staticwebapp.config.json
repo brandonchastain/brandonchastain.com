@@ -10,6 +10,10 @@
     {
       "route": "/login",
       "redirect": "/.auth/login/github"
+    },
+    {
+      "route": "/adminconsole",
+      "allowedRoles": "contributor"
     }
   ],
   "responseOverrides": {
