@@ -29,7 +29,8 @@
 
         async function getFiles() {
             const response = await fetch('https://personalboxapp-btbbgvgdfnfdgrea.westus2-01.azurewebsites.net/files');
-            return response;
+            const payload = await response.json();
+            return payload;
         }
 
         (async () => {
