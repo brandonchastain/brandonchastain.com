@@ -57,7 +57,7 @@
             auth: {
                 clientId: "761f07fc-c073-4351-918d-6c63107e1a80",
                 authority: "https://login.microsoftonline.com/2b82e5b1-378d-41a0-850b-5c97ff489b57",
-                redirectUri: "https://www.brandonchastain.com/adminconsole"
+                redirectUri: "."
             }
         };
 
@@ -66,7 +66,7 @@
         async function signIn() {
             try {
                 const loginResponse = await msalInstance.loginPopup({
-                    scopes: ["api://761f07fc-c073-4351-918d-6c63107e1a80/user_impersonation"]
+                    scopes: ["User.Read"]
                 });
                 document.getElementById('login').style.display = 'none';
                 document.getElementById('callApi').style.display = 'block';
