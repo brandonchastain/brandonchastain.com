@@ -38,7 +38,7 @@
             document.getElementById("name").textContent = principal.userDetails;
 
             var files = await getFiles();
-            for (var file in files) {
+            for (var file of files) {
                 var href = 'https://personalboxapp-btbbgvgdfnfdgrea.westus2-01.azurewebsites.net/files/' + file + '">';
                 var a = document.createElement('a');
                 a.setAttribute('href', href);
