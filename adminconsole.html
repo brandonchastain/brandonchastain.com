@@ -39,11 +39,12 @@
 
             var files = await getFiles();
             for (var file of files) {
-                var href = 'https://personalboxapp-btbbgvgdfnfdgrea.westus2-01.azurewebsites.net/files/' + file + '">';
+                var href = 'https://personalboxapp-btbbgvgdfnfdgrea.westus2-01.azurewebsites.net/files/' + file;
                 var a = document.createElement('a');
                 a.setAttribute('href', href);
                 a.innerText = file;
                 document.getElementById("files").appendChild(a);
+                document.getElementById("files").appendChild(document.CreateElement("br"));
             }
         })();
     </script>
