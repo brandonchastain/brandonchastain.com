@@ -10,7 +10,12 @@
         <a href="index.html">Home</a>
         <h1>Admin Console</h1>
         Hello <div id="name"></div>
-        
+
+        <div id="files"></div>
+        <form action="https://personalboxapp-btbbgvgdfnfdgrea.westus2-01.azurewebsites.net/files" encType="multipart/form-data">
+            <input type="file" id="file" name="file" />
+            <input type="submit" />
+        </form>
         <a href="/logout">Log out</a>
     </div>
 
@@ -22,9 +27,17 @@
             return clientPrincipal;
         }
 
+        async function getFiles() {
+            const response = await fetch('https://personalboxapp-btbbgvgdfnfdgrea.westus2-01.azurewebsites.net/files');
+            return response;
+        }
+
         (async () => {
             var principal = await getUserInfo();
             document.getElementById("name").textContent = principal.userDetails;
+
+            var files = await getFiles();
+            document.getElementById("files").textContent = files;
         })();
     </script>
 </body>
