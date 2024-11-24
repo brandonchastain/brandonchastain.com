@@ -39,8 +39,11 @@
 
             var files = await getFiles();
             for (var file in files) {
-                var content = '<a href="https://personalboxapp-btbbgvgdfnfdgrea.westus2-01.azurewebsites.net/files/' + file + '">' + file + '</a>';
-                document.getElementById("files").appendChild(content);
+                var href = 'https://personalboxapp-btbbgvgdfnfdgrea.westus2-01.azurewebsites.net/files/' + file + '">';
+                var a = document.createElement('a');
+                a.setAttribute('href', href);
+                a.innerText = file;
+                document.getElementById("files").appendChild(a);
             }
         })();
     </script>
