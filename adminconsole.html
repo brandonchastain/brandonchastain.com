@@ -37,7 +37,7 @@
             document.getElementById("name").textContent = principal.userDetails;
 
             var files = await getFiles();
-            document.getElementById("files").textContent = files;
+            document.getElementById("files").textContent = JSON.stringify(files);
         })();
     </script>
 </body>
