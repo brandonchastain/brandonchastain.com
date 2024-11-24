@@ -40,7 +40,7 @@
             var files = await getFiles();
             for (var file in files) {
                 var content = '<a href="https://personalboxapp-btbbgvgdfnfdgrea.westus2-01.azurewebsites.net/files/' + file + '">' + file + '</a>';
-                document.getElementById("files").innerHtml += content;
+                document.getElementById("files").appendChild(content);
             }
         })();
     </script>
