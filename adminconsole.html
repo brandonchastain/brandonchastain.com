@@ -9,19 +9,18 @@
 <body>
     <div class="content col-6">
         <a href="index.html">Home</a>
+        
         <h1>Admin Console</h1>
+        
         Hello <div id="name"></div>
 
-
-
-        <button id="login" onclick="signIn()">LoginBackend</button>
-        <button id="callApi" onclick="getFiles()" style="display:none">Call API</button>
-
         <div id="files"></div>
+        
         <form method="POST" action="https://personalboxapp-btbbgvgdfnfdgrea.westus2-01.azurewebsites.net/files" encType="multipart/form-data">
             <input type="file" id="file" name="file" />
             <input type="submit" />
         </form>
+        
         <a href="/logout">Log out</a>
     </div>
 
@@ -34,9 +33,14 @@
         }
 
         async function getFiles() {
-            const response = await callApi();
-            const payload = await response.json();
-            return payload;
+            try {
+                const response = await fetch('https://personalboxapp-btbbgvgdfnfdgrea.westus2-01.azurewebsites.net/files');
+                const data = await response.json();
+                console.log(data);
+                return data;
+            } catch (err) {
+                console.error(err);
+            }
         }
 
         (async () => {
@@ -49,53 +53,17 @@
                 var a = document.createElement('a');
                 a.setAttribute('href', href);
                 a.innerText = file;
-                document.getElementById("files").appendChild(a);
-                document.getElementById("files").appendChild(document.createElement("br"));
+
+                var deleteLink = document.createElement('a');
+                deleteLink.setAttribute('href', href + 'delete/' + file);
+                deleteLink.innerText = 'Delete';
+
+                var div = document.getElementById("files");
+                div.appendChild(a);
+                div.appendChild(deleteLink);
+                div.appendChild(document.createElement("br"));
             }
         })();
-        const msalConfig = {
-            auth: {
-                clientId: "761f07fc-c073-4351-918d-6c63107e1a80",
-                authority: "https://login.microsoftonline.com/2b82e5b1-378d-41a0-850b-5c97ff489b57",
-                redirectUri: "https://www.brandonchastain.com/adminconsole"
-            }
-        };
-
-        const msalInstance = new msal.PublicClientApplication(msalConfig);
-
-        async function signIn() {
-            try {
-                const loginResponse = await msalInstance.loginPopup({
-                    scopes: ["User.Read"]
-                });
-                document.getElementById('login').style.display = 'none';
-                document.getElementById('callApi').style.display = 'block';
-            } catch (err) {
-                console.error(err);
-            }
-        }
-
-        async function callApi() {
-            try {
-                const account = msalInstance.getAllAccounts()[0];
-                const tokenResponse = await msalInstance.acquireTokenSilent({
-                    scopes: ["api://761f07fc-c073-4351-918d-6c63107e1a80/user_impersonation"],
-                    account: account
-                });
-
-                const response = await fetch('https://personalboxapp-btbbgvgdfnfdgrea.westus2-01.azurewebsites.net/files', {
-                    headers: {
-                        'Authorization': `Bearer ${tokenResponse.accessToken}`
-                    }
-                });
-                const data = await response.json();
-                console.log(data);
-
-                return data;
-            } catch (err) {
-                console.error(err);
-            }
-        }
     </script>
 </body>
 </html>
