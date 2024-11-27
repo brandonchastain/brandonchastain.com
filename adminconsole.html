@@ -49,9 +49,9 @@
 
             var files = await getFiles();
             for (var file of files) {
-                var href = 'https://personalboxapp-btbbgvgdfnfdgrea.westus2-01.azurewebsites.net/files/' + file;
+                var href = 'https://personalboxapp-btbbgvgdfnfdgrea.westus2-01.azurewebsites.net/files/;
                 var a = document.createElement('a');
-                a.setAttribute('href', href);
+                a.setAttribute('href', href + file);
                 a.innerText = file;
 
                 var deleteLink = document.createElement('a');
