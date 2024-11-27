@@ -64,7 +64,7 @@
 
                 var deleteLink = document.createElement('a');
                 deleteLink.setAttribute('href', '#'); //href + 'delete/' + file);
-                deleteLink.onclick = 'deleteFile(' + file + ');';
+                deleteLink.onclick = function () { deleteFile(file); };
                 deleteLink.innerText = 'Delete';
 
                 var div = document.getElementById("files");
