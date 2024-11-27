@@ -43,6 +43,14 @@
             }
         }
 
+        async function deleteFile(fileName) {
+            const response = await fetch('https://personalboxapp-btbbgvgdfnfdgrea.westus2-01.azurewebsites.net/files/delete' + fileName, 
+                                         {
+                                             method: 'POST'
+                                         });
+            window.refresh();
+        }
+
         (async () => {
             var principal = await getUserInfo();
             document.getElementById("name").textContent = principal.userDetails;
@@ -55,7 +63,8 @@
                 a.innerText = file;
 
                 var deleteLink = document.createElement('a');
-                deleteLink.setAttribute('href', href + 'delete/' + file);
+                deleteLink.setAttribute('href', '#'); //href + 'delete/' + file);
+                deleteLink.onclick = 'deleteFile(' + file + ');';
                 deleteLink.innerText = 'Delete';
 
                 var div = document.getElementById("files");
