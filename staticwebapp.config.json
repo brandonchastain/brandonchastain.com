@@ -6,26 +6,8 @@
       "headers": {
         "cache-control": "must-revalidate, max-age=15770000"
       }
-    },
-    {
-      "route": "/login",
-      "redirect": "/.auth/login/github"
-    },
-    {
-      "route": "/logout",
-      "redirect": "/.auth/logout"
-    },
-    {
-      "route": "/adminconsole",
-      "allowedRoles": ["contributor"]
     }
   ],
-  "responseOverrides": {
-    "401": {
-      "redirect": "/.auth/login/github?post_login_redirect_uri=.referrer",
-      "statusCode": 302
-    }
-  },
   "navigationFallback": {
     "rewrite": "index.html",
     "exclude": ["/img/*.{png,jpg,jpeggif}", "/css/*"]
