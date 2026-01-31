@@ -1,0 +1,64 @@
+<html>
+
+<head>
+	<link rel="stylesheet" href="../../css/style.css">
+	<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+	<link rel="stylesheet" href="../../css/dracula.css">
+</head>
+
+<body>
+<div class="content col-6">
+<a href="../../blogs.html">Back to blogs</a>
+<h1>Devlog</h1>
+
+<img src="../../img/IMG_0070.gif">
+
+<h2>Porting a console-based Tetris game to the browser (with Blazor)</h2>
+<p>
+  While making my previous game <a href="bsnake.html">B SNAKE</a>, I learned how fun and addicting it is to build games with C# and Blazor.
+  WebAssembly (WASM) is ultra-convenient for me as a dev and for players. I get to program in the same language I use at work every day, 
+  and players can play a game on their phone or PC without installing anything.
+</p>
+<p>
+  After I completed B SNAKE, I realized I had a useful template for future games and that I had
+  already gotten through the "absolute noob" stage of my gamedev journey.
+  So, I used it to make more games!
+</p>
+
+<h3>Revive (or, rerender)</h3>
+<p>
+  I actually already built a Tetris clone in C# some years ago, but it ran in the console
+  and was rendered terribly by my custom <code>ConsoleTetrisRenderer</code> class. 
+</p>
+<img src="../../img/oldTetris.png" alt="old game screenshot running in the console. it's not pretty">
+<p>
+  It became clear to me that
+  I could massively revamp the game's graphics and playability by adapting it to my new
+  Blazor game template. Once the scaffolding was set up, all I'd need to do is create a new renderer
+  implementation that draws to the Blazor HTML5 Canvas. And so I did that!
+  I fixed some bugs with piece rotations and added a button to bank the current piece.
+</p>
+  
+<h3>Conclusion</h3>
+<p>
+  I'm happy that my old code was implemented well, as I only needed to add a new renderer 
+  and wire up some plumbing to get the game working in Blazor.
+  
+  I also saved some time there because I started with my previous Blazor game as a starter template for this project.
+  
+  It was really fun to breathe life into an old game I made about 4 years ago.
+</p>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/csharp.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/javascript.min.js"></script>
+<script>hljs.initHighlightingOnLoad();</script>
+<script>
+document.querySelectorAll("code").forEach(function(element) {
+    element.innerHTML = element.innerHTML.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;").replace(/'/g, "&#039;");
+});
+</script>
+
+</body>
+</html>

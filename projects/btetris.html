@@ -1,22 +1,17 @@
 <html>
 
 <head>
-	<link rel="stylesheet" href="../../css/style.css">
+	<link rel="stylesheet" href="../css/style.css">
 	<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-	<link rel="stylesheet" href="../../css/dracula.css">
-	<script>
-    !function(t,e){var o,n,p,r;e.__SV||(window.posthog=e,e._i=[],e.init=function(i,s,a){function g(t,e){var o=e.split(".");2==o.length&&(t=t[o[0]],e=o[1]),t[e]=function(){t.push([e].concat(Array.prototype.slice.call(arguments,0)))}}(p=t.createElement("script")).type="text/javascript",p.async=!0,p.src=s.api_host.replace(".i.posthog.com","-assets.i.posthog.com")+"/static/array.js",(r=t.getElementsByTagName("script")[0]).parentNode.insertBefore(p,r);var u=e;for(void 0!==a?u=e[a]=[]:a="posthog",u.people=u.people||[],u.toString=function(t){var e="posthog";return"posthog"!==a&&(e+="."+a),t||(e+=" (stub)"),e},u.people.toString=function(){return u.toString(1)+".people (stub)"},o="capture identify alias people.set people.set_once set_config register register_once unregister opt_out_capturing has_opted_out_capturing opt_in_capturing reset isFeatureEnabled onFeatureFlags getFeatureFlag getFeatureFlagPayload reloadFeatureFlags group updateEarlyAccessFeatureEnrollment getEarlyAccessFeatures getActiveMatchingSurveys getSurveys getNextSurveyStep onSessionId setPersonProperties".split(" "),n=0;n<o.length;n++)g(u,o[n]);e._i.push([i,s,a])},e.__SV=1)}(document,window.posthog||[]);
-    posthog.init('phc_6TmAWPHDnvSwkkXT8wiSFtPUCfpQ3YPN2h5KoMiVryo',{api_host:'https://us.i.posthog.com', person_profiles: 'identified_only' // or 'always' to create profiles for anonymous users as well
-        })
-      </script>
+	<link rel="stylesheet" href="../css/dracula.css">
 </head>
 
 <body>
 <div class="content col-6">
-<a href="../../projects.html">Back to projects</a>
+<a href="../projects.html">Back to projects</a>
 <h1>B TETRIS</h1>
 
-<img src="../../img/IMG_0070.gif">
+<img src="../img/IMG_0070.gif">
 
 <h2>How to play</h2>
 <p>
@@ -51,37 +46,9 @@
 
 <h2>Developer Log</h2>
 <p>
-  While making my previous game <a href="bsnake.html">B SNAKE</a>, I learned how fun and addicting it is to build games with C# and Blazor.
-  WebAssembly (WASM) is ultra-convenient for me as a dev and for players. I get to program in the same language I use at work every day, 
-  and players can play a game on their phone or PC without installing anything.
-</p>
-<p>
-  After I completed B SNAKE, I realized I had a useful template for future games and that I had
-  already gotten through the "absolute noob" stage of my gamedev journey.
-  So, I used it to make more games!
+	<a href="../blogs/btetris.html">DevLog: Porting a console-based Tetris game to the browser (with Blazor)</a>
 </p>
 
-<h3>Resurrecting my old Tetris game</h3>
-<p>
-  I actually already built a Tetris clone in C# some years ago, but it ran in the console
-  and was rendered terribly by my custom <code>ConsoleTetrisRenderer</code> class. 
-</p>
-<img src="../../img/oldTetris.png" alt="old game screenshot running in the console. it's not pretty">
-<p>
-  It became clear to me that
-  I could massively revamp the game's graphics and playability by adapting it to my new
-  Blazor game template. Once the scaffolding was set up, all I'd need to do is create a new renderer
-  implementation that draws to the Blazor HTML5 Canvas. And so I did that!
-  I fixed some bugs with piece rotations and added a button to bank the current piece.
-</p>
-  
-<h3>Conclusion</h3>
-<p>
-  This project was a blast because of how easy it was - all I did was pop in an old library
-  to this project, add a class, adjust a few things - and I had an ACTUAL Tetris game, with graphics, 
-  within a few hours. This showed me that re-using code can pay dividends when you want to focus on the
-  next exciting challenge. 
-</p>
 </div>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
