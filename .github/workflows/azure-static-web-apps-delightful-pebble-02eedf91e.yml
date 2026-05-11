@@ -19,6 +19,8 @@ jobs:
         with:
           submodules: true
           lfs: false
+      - name: Strip non-deployed paths
+        run: rm -rf tripreports/data .github/skills .github/copilot-instructions.md tools .regen-all.sh .sync-and-regen.sh start-local-server.bat
       - name: Build And Deploy
         id: builddeploy
         uses: Azure/static-web-apps-deploy@v1
