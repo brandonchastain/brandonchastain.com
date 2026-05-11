@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html>
+  <head>
+      <meta charset="utf-8">
+      <link rel="stylesheet" href="../../css/style.css">
+      <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+      <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
+      <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+      <script src="https://unpkg.com/leaflet-gpx@1.7.0/gpx.js"></script>
+  </head>
+  <body>
+    <div class="content col-6">
+        <a href="../../tripreports.html">Trip Reports</a>
+        <h1>Cascade Pass and Sahale Arm</h1>
+        <p class="summary">
+            <strong>Region:</strong> North Cascades National Park, WA<br/>
+            <strong>Date:</strong> 2025-07-26 (08:08&ndash;20:38 PDT)<br/>
+            <strong>Distance:</strong> 12.80 miles<br/>
+            <strong>Gain:</strong> 3,991 feet<br/>
+            <strong>Duration:</strong> 12h 29m (8h 4m moving, 4h 25m stopped)<br/>
+            <strong>Avg speed:</strong> 1.59 mph moving / 1.02 mph overall<br/>
+            <strong>Weather:</strong> Overcast at start, mainly clear by the descent. Temps 52&ndash;65&deg;F, W winds 2&ndash;6 mph, no precipitation.<br/>
+        </p>
+
+        <h3>Route</h3>
+        <div id="map" style="height:420px;width:100%;margin-bottom:1em;"></div>
+        <script>
+          (function () {
+            var map = L.map('map');
+            var satellite = L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}', {
+              maxZoom: 19,
+              attribution: 'Tiles &copy; Esri &mdash; Source: Esri, i-cubed, USDA, USGS, AEX, GeoEye, Getmapping, Aerogrid, IGN, IGP, UPR-EGP, and the GIS User Community'
+            }).addTo(map);
+            var topo = L.tileLayer('https://{s}.tile.opentopomap.org/{z}/{x}/{y}.png', {
+              maxZoom: 17,
+              opacity: 0.5,
+              attribution: 'Map data: &copy; OpenStreetMap contributors, SRTM | Map style: &copy; OpenTopoMap (CC-BY-SA)'
+            }).addTo(map);
+
+            var BlendControl = L.Control.extend({
+              options: { position: 'topright' },
+              onAdd: function () {
+                var div = L.DomUtil.create('div', 'leaflet-bar');
+                div.style.background = 'white';
+                div.style.padding = '6px 8px';
+                div.style.font = '12px/1.2 sans-serif';
+                div.innerHTML =
+                  '<div style="display:flex;justify-content:space-between;"><span>Satellite</span><span>Topo</span></div>' +
+                  '<input type="range" min="0" max="100" value="50" style="width:140px;display:block;">';
+                var slider = div.querySelector('input');
+                L.DomEvent.disableClickPropagation(div);
+                L.DomEvent.on(slider, 'input', function () {
+                  topo.setOpacity(slider.value / 100);
+                });
+                return div;
+              }
+            });
+            new BlendControl().addTo(map);
+
+            new L.GPX('../../img/cascade-pass-sahale-arm/track.gpx', {
+              async: true,
+              polyline_options: { color: 'red', weight: 3, opacity: 0.9 },
+              marker_options: {
+                startIconUrl: null, endIconUrl: null, shadowUrl: null
+              }
+            }).on('loaded', function (e) {
+              map.fitBounds(e.target.getBounds(), { padding: [20, 20] });
+            }).addTo(map);
+
+            window.tripMap = map;
+          })();
+        </script>
+        <h3>Elevation Profile</h3>
+        <img src="../../img/cascade-pass-sahale-arm/elevation.png" width="600"/>
+
+        <div id="gallery-strip" class="gallery-strip"></div>
+        <div id="lightbox" class="lightbox" hidden>
+          <button class="lightbox-close" aria-label="Close">&times;</button>
+          <button class="lightbox-prev" aria-label="Previous">&#10094;</button>
+          <img class="lightbox-img" alt=""/>
+          <button class="lightbox-next" aria-label="Next">&#10095;</button>
+          <div class="lightbox-caption"></div>
+        </div>
+        <script>
+          (function () {
+            var photos = [{"file": "IMG_4841.jpg", "time": "2025-07-26T10:43:59", "lat": 48.46981388888889, "lon": -121.05514444444444}, {"file": "IMG_4856.jpg", "time": "2025-07-26T12:14:27", "lat": 48.47398888888889, "lon": -121.0566861111111}, {"file": "IMG_4860.jpg", "time": "2025-07-26T12:37:28", "lat": 48.47741388888889, "lon": -121.05721388888888}, {"file": "IMG_4865.JPG", "time": "2025-07-26T12:40:03", "lat": 48.47739722222222, "lon": -121.05721944444444}, {"file": "IMG_4875.jpg", "time": "2025-07-26T12:51:31", "lat": 48.47985833333333, "lon": -121.05406111111111}, {"file": "IMG_4886.jpg", "time": "2025-07-26T12:52:45", "lat": 48.47988055555556, "lon": -121.054025}, {"file": "IMG_4889.jpg", "time": "2025-07-26T12:52:49", "lat": 48.47987777777778, "lon": -121.054025}, {"file": "IMG_4893.jpg", "time": "2025-07-26T12:52:51", "lat": 48.47987777777778, "lon": -121.054025}, {"file": "IMG_4896.jpg", "time": "2025-07-26T12:52:56", "lat": 48.47987777777778, "lon": -121.05401666666667}, {"file": "IMG_4899.jpg", "time": "2025-07-26T12:53:07", "lat": 48.479847222222226, "lon": -121.054}, {"file": "IMG_4902.jpg", "time": "2025-07-26T12:53:50", "lat": 48.47983888888889, "lon": -121.054}, {"file": "IMG_4906.jpg", "time": "2025-07-26T12:53:58", "lat": 48.47983611111111, "lon": -121.054}, {"file": "IMG_4909.jpg", "time": "2025-07-26T12:54:04", "lat": 48.47983611111111, "lon": -121.054}, {"file": "IMG_4913.jpg", "time": "2025-07-26T12:54:07", "lat": 48.47983611111111, "lon": -121.054}, {"file": "IMG_4918.jpg", "time": "2025-07-26T13:20:23", "lat": 48.48272222222222, "lon": -121.05035277777777}, {"file": "IMG_4923.jpg", "time": "2025-07-26T13:47:13", "lat": 48.483311111111114, "lon": -121.04808888888888}, {"file": "IMG_4929.jpg", "time": "2025-07-26T14:13:59", "lat": 48.48445, "lon": -121.04676944444444}, {"file": "IMG_4932.jpg", "time": "2025-07-26T14:14:19", "lat": 48.48444444444444, "lon": -121.046775}, {"file": "IMG_4940.jpg", "time": "2025-07-26T15:09:11", "lat": 48.485169444444445, "lon": -121.0460361111111}, {"file": "IMG_4943.jpg", "time": "2025-07-26T15:09:22", "lat": 48.485172222222225, "lon": -121.04605}, {"file": "IMG_4954.jpg", "time": "2025-07-26T16:26:04", "lat": 48.4786, "lon": -121.05547222222222}, {"file": "IMG_4958.jpg", "time": "2025-07-26T16:26:18", "lat": 48.478611111111114, "lon": -121.05547222222222}, {"file": "IMG_4961.jpg", "time": "2025-07-26T17:13:02", "lat": 48.473075, "lon": -121.0549861111111}];
+            if (!photos.length) return;
+            var slug = "cascade-pass-sahale-arm";
+            var stripEl = document.getElementById('gallery-strip');
+            photos.forEach(function (p, i) {
+              var img = document.createElement('img');
+              img.src = '../../img/' + slug + '/' + p.file;
+              img.loading = 'lazy';
+              img.dataset.idx = i;
+              img.addEventListener('click', function () { openLightbox(i); });
+              stripEl.appendChild(img);
+            });
+
+            // Map dots: clickable markers on the route map sharing the same map instance.
+            // The route-map block defines `map` inside an IIFE; re-resolve via DOM.
+            // We attach to window.tripMap if exposed; otherwise we wait briefly.
+            function addMapDots() {
+              var m = window.tripMap;
+              if (!m) { setTimeout(addMapDots, 200); return; }
+              photos.forEach(function (p, i) {
+                if (p.lat == null || p.lon == null) return;
+                var dot = L.divIcon({
+                  className: '',
+                  html: '<div class="photo-dot" data-idx="' + i + '"></div>',
+                  iconSize: [10, 10], iconAnchor: [5, 5]
+                });
+                var mk = L.marker([p.lat, p.lon], { icon: dot }).addTo(m);
+                mk.on('click', function () { openLightbox(i); });
+                p._marker = mk;
+              });
+            }
+            addMapDots();
+
+            var lb = document.getElementById('lightbox');
+            var lbImg = lb.querySelector('.lightbox-img');
+            var lbCap = lb.querySelector('.lightbox-caption');
+            var cur = 0;
+            function openLightbox(i) {
+              cur = i; render(); lb.hidden = false;
+            }
+            function render() {
+              var p = photos[cur];
+              lbImg.src = '../../img/' + slug + '/' + p.file;
+              lbCap.textContent = (cur + 1) + ' / ' + photos.length + (p.time ? ' — ' + p.time.replace('T', ' ').slice(0, 16) : '');
+              // Highlight current marker
+              photos.forEach(function (q, j) {
+                if (!q._marker) return;
+                var el = q._marker.getElement();
+                if (el) el.querySelector('.photo-dot').classList.toggle('active', j === cur);
+              });
+            }
+            lb.querySelector('.lightbox-close').onclick = function () { lb.hidden = true; };
+            lb.querySelector('.lightbox-prev').onclick = function () { cur = (cur - 1 + photos.length) % photos.length; render(); };
+            lb.querySelector('.lightbox-next').onclick = function () { cur = (cur + 1) % photos.length; render(); };
+            document.addEventListener('keydown', function (e) {
+              if (lb.hidden) return;
+              if (e.key === 'Escape') lb.hidden = true;
+              else if (e.key === 'ArrowLeft') lb.querySelector('.lightbox-prev').click();
+              else if (e.key === 'ArrowRight') lb.querySelector('.lightbox-next').click();
+            });
+          })();
+        </script>
+
+    </div>
+    <script src="../../js/site.js"></script>
+  </body>
+</html>

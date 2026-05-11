@@ -1,0 +1,4 @@
+gpxpy>=1.6.2
+Pillow>=10.0
+pillow-heif>=0.16
+numpy>=1.24

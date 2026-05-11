@@ -1,17 +1,151 @@
+<!DOCTYPE html>
 <html>
   <head>
+      <meta charset="utf-8">
       <link rel="stylesheet" href="css/style.css">
       <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+      <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
+      <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+      <script src="https://unpkg.com/leaflet-gpx@1.7.0/gpx.js"></script>
+      <style>
+        .trip-marker {
+          border: 2px solid white; border-radius: 50%;
+          width: 14px; height: 14px; box-shadow: 0 1px 3px rgba(0,0,0,0.4);
+        }
+      </style>
   </head>
   <body>
     <div class="content col-6">
       <a href="index.html">Home</a>
       <h1>Trip Reports</h1>
-        <ul>
-          <li>
-            <a href="tripreports/2022/Eldorado_Peak.html">Eldorado Peak (North Cascades, WA)</a>
-          </li>
-        </ul>
+
+      <div id="map" style="height:480px;width:100%;margin:0 0 1.5em;"></div>
+      <script>
+        // Order matches the year sections below — newest first.
+        // Color per year for visual grouping.
+        var yearColors = {
+          "2026": "#c0392b", "2025": "#e67e22", "2024": "#f1c40f",
+          "2023": "#27ae60", "2022": "#2980b9", "2021": "#8e44ad",
+          "2019": "#16a085"
+        };
+        var trips = [
+          { year: 2026, href: "tripreports/2026/Snoqualmie_Mountain.html",        slug: "snoqualmie_mtn",                  title: "Snoqualmie Mountain",                lat: 47.4452, lon: -121.4220 },
+          { year: 2025, href: "tripreports/2025/Mt_Daniel_West_Summit.html",      slug: "mt-daniel-west-summit-with-will", title: "Mt Daniel (West Summit)",            lat: 47.5434, lon: -121.0971 },
+          { year: 2025, href: "tripreports/2025/Cascade_Pass_and_Sahale_Arm.html",slug: "cascade-pass-sahale-arm",         title: "Cascade Pass &amp; Sahale Arm",      lat: 48.4745, lon: -121.0765 },
+          { year: 2024, href: "tripreports/2024/Oyster_Dome.html",                slug: "track-51124-112204am",            title: "Oyster Dome",                        lat: 48.6155, lon: -122.4274 },
+          { year: 2024, href: "tripreports/2024/Mt_Si.html",                      slug: "track-21024-120420pm",            title: "Mt Si",                              lat: 47.4886, lon: -121.7232 },
+          { year: 2023, href: "tripreports/2023/Lake_Ingalls.html",               slug: "track-10723-92949am",             title: "Lake Ingalls",                       lat: 47.4219, lon: -120.9375 },
+          { year: 2023, href: "tripreports/2023/Tomyhoi_Peak.html",               slug: "track-93023-94843am",             title: "Tomyhoi Peak",                       lat: 48.9431, lon: -121.6693 },
+          { year: 2023, href: "tripreports/2023/Mt_Rainier_-_Sunrise_Area.html",  slug: "track-81923-102701am",            title: "Mt Rainier &mdash; Sunrise Area",    lat: 46.8877, lon: -121.5049 },
+          { year: 2023, href: "tripreports/2023/Klahhane_Ridge.html",             slug: "track-7823-104316am",             title: "Klahhane Ridge",                     lat: 48.0382, lon: -123.4328 },
+          { year: 2023, href: "tripreports/2023/Eldorado_Peak_2023.html",         slug: "eldorado_2",                      title: "Eldorado Peak (2023)",               lat: 48.4927, lon: -121.1220 },
+          { year: 2023, href: "tripreports/2023/Rattlesnake_Ledge.html",          slug: "track-51323-32841pm",             title: "Rattlesnake Ledge",                  lat: 47.4373, lon: -121.7745 },
+          { year: 2023, href: "tripreports/2023/Little_Si.html",                  slug: "track-51323-120101pm",            title: "Little Si",                          lat: 47.4875, lon: -121.7557 },
+          { year: 2022, href: "tripreports/2022/Eldorado_Peak.html",              slug: "eldorado_1",                      title: "Eldorado Peak (2022)",               lat: 48.4927, lon: -121.1219 },
+          { year: 2022, href: "tripreports/2022/Enchantments_Thru-Hike.html",     slug: "track-82022-63134am",             title: "Enchantments Thru-Hike",             lat: 47.5320, lon: -120.8160 },
+          { year: 2022, href: "tripreports/2022/Mt_Pilchuck.html",                slug: "pilchuck",                        title: "Mt Pilchuck",                        lat: 48.0701, lon: -121.8147 },
+          { year: 2022, href: "tripreports/2022/Mt_Maude_and_Carne_Mountain_Loop.html", slug: "mr-maude-carne-loop-trailhead", title: "Mt Maude and Carne Mountain Loop", lat: 48.08406, lon: -120.82278, waypointOnly: true },
+          { year: 2021, href: "tripreports/2021/Iron_Peak.html",                  slug: "iron_peak",                       title: "Iron Peak",                          lat: 47.4223, lon: -120.9316 },
+          { year: 2021, href: "tripreports/2021/Mount_Storm_King.html",           slug: "storm_king",                      title: "Mount Storm King",                   lat: 48.0572, lon: -123.7872 },
+          { year: 2019, href: "tripreports/2019/Davis_Peak.html",                  slug: "davis-peak-hiked-with-will-dogs", title: "Davis Peak",                         lat: 47.44802, lon: -121.07953, waypointOnly: true }
+        ];
+
+        // Waypoint-only trips — report pending (date inferred from photo cluster scan).
+        var pendingTrips = [
+          { title: "Iron Mountain", lat: 48.16042, lon: -121.54161 },
+          { title: "Mason Lake",   lat: 47.42358, lon: -121.55489 }
+        ];
+
+        var map = L.map('map');
+        L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}', {
+          maxZoom: 19,
+          attribution: 'Tiles &copy; Esri &mdash; Source: Esri, i-cubed, USDA, USGS, AEX, GeoEye, Getmapping, Aerogrid, IGN, IGP, UPR-EGP, and the GIS User Community'
+        }).addTo(map);
+        L.tileLayer('https://{s}.tile.opentopomap.org/{z}/{x}/{y}.png', {
+          maxZoom: 17, opacity: 0.5,
+          attribution: 'Map data: &copy; OpenStreetMap contributors, SRTM | Map style: &copy; OpenTopoMap (CC-BY-SA)'
+        }).addTo(map);
+
+        var allBounds = L.latLngBounds([]);
+        trips.forEach(function (t) {
+          var color = yearColors[t.year] || '#c0392b';
+          new L.GPX('img/' + t.slug + '/track.gpx', {
+            async: true,
+            polyline_options: { color: color, weight: 4, opacity: 0.85 },
+            marker_options: { startIconUrl: null, endIconUrl: null, shadowUrl: null }
+          }).on('loaded', function (e) {
+            allBounds.extend(e.target.getBounds());
+            map.fitBounds(allBounds, { padding: [30, 30] });
+            e.target.bindTooltip(t.title + ' (' + t.year + ')', { sticky: true });
+            e.target.on('click', function () { window.location = t.href; });
+          }).addTo(map);
+
+          var icon = L.divIcon({
+            className: '',
+            html: '<div class="trip-marker" style="background:' + color + ';"></div>',
+            iconSize: [14, 14], iconAnchor: [7, 7]
+          });
+          L.marker([t.lat, t.lon], { icon: icon })
+            .bindPopup('<strong>' + t.title + '</strong> &mdash; ' + t.year + '<br/><a href="' + t.href + '">Open report</a>')
+            .addTo(map);
+        });
+
+        // Render pending (waypoint-only) trips as muted gray dots.
+        pendingTrips.forEach(function (t) {
+          var icon = L.divIcon({
+            className: '',
+            html: '<div class="trip-marker" style="background:#888;"></div>',
+            iconSize: [14, 14], iconAnchor: [7, 7]
+          });
+          L.marker([t.lat, t.lon], { icon: icon })
+            .bindPopup('<strong>' + t.title + '</strong><br/>Report pending')
+            .addTo(map);
+        });
+
+        // Initial view in case GPX fetches are slow.
+        map.setView([47.8, -121.7], 7);
+      </script>
+
+      <h3>2026</h3>
+      <ul>
+        <li><a href="tripreports/2026/Snoqualmie_Mountain.html">Snoqualmie Mountain</a></li>
+      </ul>
+      <h3>2025</h3>
+      <ul>
+        <li><a href="tripreports/2025/Mt_Daniel_West_Summit.html">Mt Daniel (West Summit)</a></li>
+        <li><a href="tripreports/2025/Cascade_Pass_and_Sahale_Arm.html">Cascade Pass &amp; Sahale Arm</a></li>
+      </ul>
+      <h3>2024</h3>
+      <ul>
+        <li><a href="tripreports/2024/Oyster_Dome.html">Oyster Dome</a></li>
+        <li><a href="tripreports/2024/Mt_Si.html">Mt Si</a></li>
+      </ul>
+      <h3>2023</h3>
+      <ul>
+        <li><a href="tripreports/2023/Lake_Ingalls.html">Lake Ingalls</a></li>
+        <li><a href="tripreports/2023/Tomyhoi_Peak.html">Tomyhoi Peak</a></li>
+        <li><a href="tripreports/2023/Mt_Rainier_-_Sunrise_Area.html">Mt Rainier &mdash; Sunrise Area</a></li>
+        <li><a href="tripreports/2023/Klahhane_Ridge.html">Klahhane Ridge (Olympic NP)</a></li>
+        <li><a href="tripreports/2023/Eldorado_Peak_2023.html">Eldorado Peak (2023)</a></li>
+        <li><a href="tripreports/2023/Rattlesnake_Ledge.html">Rattlesnake Ledge</a></li>
+        <li><a href="tripreports/2023/Little_Si.html">Little Si</a></li>
+      </ul>
+      <h3>2022</h3>
+      <ul>
+        <li><a href="tripreports/2022/Eldorado_Peak.html">Eldorado Peak (North Cascades, WA)</a></li>
+        <li><a href="tripreports/2022/Enchantments_Thru-Hike.html">Enchantments Thru-Hike</a></li>
+        <li><a href="tripreports/2022/Mt_Pilchuck.html">Mt Pilchuck</a></li>
+        <li><a href="tripreports/2022/Mt_Maude_and_Carne_Mountain_Loop.html">Mt Maude and Carne Mountain Loop</a></li>
+      </ul>
+      <h3>2021</h3>
+      <ul>
+        <li><a href="tripreports/2021/Iron_Peak.html">Iron Peak</a></li>
+        <li><a href="tripreports/2021/Mount_Storm_King.html">Mount Storm King</a></li>
+      </ul>
+      <h3>2019</h3>
+      <ul>
+        <li><a href="tripreports/2019/Davis_Peak.html">Davis Peak</a></li>
+      </ul>
     </div>
   </body>
 </html>

@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html>
+  <head>
+      <meta charset="utf-8">
+      <link rel="stylesheet" href="../../css/style.css">
+      <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+      <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
+      <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+      <script src="https://unpkg.com/leaflet-gpx@1.7.0/gpx.js"></script>
+  </head>
+  <body>
+    <div class="content col-6">
+        <a href="../../tripreports.html">Trip Reports</a>
+        <h1>Eldorado Peak (2023)</h1>
+        <p class="summary">
+            <strong>Region:</strong> North Cascades National Park, WA<br/>
+            <strong>Date:</strong> 2023-07-01 (05:40&ndash;20:26 PDT)<br/>
+            <strong>Distance:</strong> 9.68 miles<br/>
+            <strong>Gain:</strong> 6,674 feet<br/>
+            <strong>Duration:</strong> 14h 46m (10h 33m moving, 4h 13m stopped)<br/>
+            <strong>Avg speed:</strong> 0.92 mph moving / 0.66 mph overall<br/>
+            <strong>Weather:</strong> Partly cloudy at start, clear by the descent. Temps 52&ndash;68&deg;F, WSW winds 2&ndash;8 mph, no precipitation.<br/>
+        </p>
+
+        <h3>Route</h3>
+        <div id="map" style="height:420px;width:100%;margin-bottom:1em;"></div>
+        <script>
+          (function () {
+            var map = L.map('map');
+            var satellite = L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}', {
+              maxZoom: 19,
+              attribution: 'Tiles &copy; Esri &mdash; Source: Esri, i-cubed, USDA, USGS, AEX, GeoEye, Getmapping, Aerogrid, IGN, IGP, UPR-EGP, and the GIS User Community'
+            }).addTo(map);
+            var topo = L.tileLayer('https://{s}.tile.opentopomap.org/{z}/{x}/{y}.png', {
+              maxZoom: 17,
+              opacity: 0.5,
+              attribution: 'Map data: &copy; OpenStreetMap contributors, SRTM | Map style: &copy; OpenTopoMap (CC-BY-SA)'
+            }).addTo(map);
+
+            var BlendControl = L.Control.extend({
+              options: { position: 'topright' },
+              onAdd: function () {
+                var div = L.DomUtil.create('div', 'leaflet-bar');
+                div.style.background = 'white';
+                div.style.padding = '6px 8px';
+                div.style.font = '12px/1.2 sans-serif';
+                div.innerHTML =
+                  '<div style="display:flex;justify-content:space-between;"><span>Satellite</span><span>Topo</span></div>' +
+                  '<input type="range" min="0" max="100" value="50" style="width:140px;display:block;">';
+                var slider = div.querySelector('input');
+                L.DomEvent.disableClickPropagation(div);
+                L.DomEvent.on(slider, 'input', function () {
+                  topo.setOpacity(slider.value / 100);
+                });
+                return div;
+              }
+            });
+            new BlendControl().addTo(map);
+
+            new L.GPX('../../img/eldorado_2/track.gpx', {
+              async: true,
+              polyline_options: { color: 'red', weight: 3, opacity: 0.9 },
+              marker_options: {
+                startIconUrl: null, endIconUrl: null, shadowUrl: null
+              }
+            }).on('loaded', function (e) {
+              map.fitBounds(e.target.getBounds(), { padding: [20, 20] });
+            }).addTo(map);
+
+            window.tripMap = map;
+          })();
+        </script>
+        <h3>Elevation Profile</h3>
+        <img src="../../img/eldorado_2/elevation.png" width="600"/>
+
+        <div id="gallery-strip" class="gallery-strip"></div>
+        <div id="lightbox" class="lightbox" hidden>
+          <button class="lightbox-close" aria-label="Close">&times;</button>
+          <button class="lightbox-prev" aria-label="Previous">&#10094;</button>
+          <img class="lightbox-img" alt=""/>
+          <button class="lightbox-next" aria-label="Next">&#10095;</button>
+          <div class="lightbox-caption"></div>
+        </div>
+        <script>
+          (function () {
+            var photos = [{"file": "IMG_2270(1).jpg", "time": "2023-07-01T06:09:11", "lat": 48.49571944444445, "lon": -121.12205555555555}, {"file": "IMG_2273(1).jpg", "time": "2023-07-01T07:09:04", "lat": 48.50358333333333, "lon": -121.11946944444443}, {"file": "IMG_2280(1).jpg", "time": "2023-07-01T07:51:40", "lat": 48.506225, "lon": -121.11886666666666}, {"file": "IMG_2283(1).jpg", "time": "2023-07-01T08:00:03", "lat": 48.507155555555556, "lon": -121.11866666666666}, {"file": "IMG_2286(1).jpg", "time": "2023-07-01T08:54:58", "lat": 48.511825, "lon": -121.11778888888888}, {"file": "IMG_2293(1).jpg", "time": "2023-07-01T09:45:56", "lat": 48.51682777777778, "lon": -121.12004722222221}, {"file": "IMG_2297(1).jpg", "time": "2023-07-01T10:22:10", "lat": 48.516758333333335, "lon": -121.12036111111111}, {"file": "IMG_2302(1).jpg", "time": "2023-07-01T10:26:20", "lat": 48.5167, "lon": -121.12058888888889}, {"file": "IMG_2303(1).jpg", "time": "2023-07-01T10:48:39", "lat": 48.51813611111111, "lon": -121.12049166666667}, {"file": "IMG_2306(1).jpg", "time": "2023-07-01T10:48:53", "lat": 48.51813055555555, "lon": -121.120475}, {"file": "IMG_7247.jpg", "time": "2023-07-01T12:22:06", "lat": 48.52729166666666, "lon": -121.12410833333333}, {"file": "IMG_7250.jpg", "time": "2023-07-01T12:30:57", "lat": 48.528708333333334, "lon": -121.12424444444444}, {"file": "IMG_7258.jpg", "time": "2023-07-01T13:56:19", "lat": 48.53794166666666, "lon": -121.13253888888889}, {"file": "IMG_7263.jpg", "time": "2023-07-01T14:01:34", "lat": 48.53807777777778, "lon": -121.1330861111111}, {"file": "IMG_2312(1).jpg", "time": "2023-07-01T14:05:32", "lat": 48.537952777777775, "lon": -121.13324722222221}, {"file": "IMG_2317(1).jpg", "time": "2023-07-01T14:06:16", "lat": 48.53796111111111, "lon": -121.13324722222221}, {"file": "IMG_2320(1).jpg", "time": "2023-07-01T14:06:28", "lat": 48.53796666666666, "lon": -121.13324722222221}, {"file": "IMG_2323(1).jpg", "time": "2023-07-01T14:15:06", "lat": 48.53799444444444, "lon": -121.1331861111111}, {"file": "IMG_2328(1).jpg", "time": "2023-07-01T14:17:24", "lat": 48.53799444444444, "lon": -121.13317777777777}, {"file": "IMG_2333(1).jpg", "time": "2023-07-01T14:17:40", "lat": 48.53800277777778, "lon": -121.13316388888889}, {"file": "IMG_2337(1).jpg", "time": "2023-07-01T14:22:38", "lat": 48.538086111111106, "lon": -121.13309444444444}, {"file": "IMG_2341(1).jpg", "time": "2023-07-01T17:03:07", "lat": 48.51674722222222, "lon": -121.12013333333333}, {"file": "IMG_2346(1).jpg", "time": "2023-07-01T17:22:25", "lat": 48.51385, "lon": -121.1181861111111}, {"file": "IMG_2349(1).jpg", "time": "2023-07-01T17:22:34", "lat": 48.513844444444445, "lon": -121.11818055555555}, {"file": "IMG_2352(1).jpg", "time": "2023-07-01T17:31:50", "lat": 48.51182222222222, "lon": -121.11775833333333}];
+            if (!photos.length) return;
+            var slug = "eldorado_2";
+            var stripEl = document.getElementById('gallery-strip');
+            photos.forEach(function (p, i) {
+              var img = document.createElement('img');
+              img.src = '../../img/' + slug + '/' + p.file;
+              img.loading = 'lazy';
+              img.dataset.idx = i;
+              img.addEventListener('click', function () { openLightbox(i); });
+              stripEl.appendChild(img);
+            });
+
+            // Map dots: clickable markers on the route map sharing the same map instance.
+            // The route-map block defines `map` inside an IIFE; re-resolve via DOM.
+            // We attach to window.tripMap if exposed; otherwise we wait briefly.
+            function addMapDots() {
+              var m = window.tripMap;
+              if (!m) { setTimeout(addMapDots, 200); return; }
+              photos.forEach(function (p, i) {
+                if (p.lat == null || p.lon == null) return;
+                var dot = L.divIcon({
+                  className: '',
+                  html: '<div class="photo-dot" data-idx="' + i + '"></div>',
+                  iconSize: [10, 10], iconAnchor: [5, 5]
+                });
+                var mk = L.marker([p.lat, p.lon], { icon: dot }).addTo(m);
+                mk.on('click', function () { openLightbox(i); });
+                p._marker = mk;
+              });
+            }
+            addMapDots();
+
+            var lb = document.getElementById('lightbox');
+            var lbImg = lb.querySelector('.lightbox-img');
+            var lbCap = lb.querySelector('.lightbox-caption');
+            var cur = 0;
+            function openLightbox(i) {
+              cur = i; render(); lb.hidden = false;
+            }
+            function render() {
+              var p = photos[cur];
+              lbImg.src = '../../img/' + slug + '/' + p.file;
+              lbCap.textContent = (cur + 1) + ' / ' + photos.length + (p.time ? ' — ' + p.time.replace('T', ' ').slice(0, 16) : '');
+              // Highlight current marker
+              photos.forEach(function (q, j) {
+                if (!q._marker) return;
+                var el = q._marker.getElement();
+                if (el) el.querySelector('.photo-dot').classList.toggle('active', j === cur);
+              });
+            }
+            lb.querySelector('.lightbox-close').onclick = function () { lb.hidden = true; };
+            lb.querySelector('.lightbox-prev').onclick = function () { cur = (cur - 1 + photos.length) % photos.length; render(); };
+            lb.querySelector('.lightbox-next').onclick = function () { cur = (cur + 1) % photos.length; render(); };
+            document.addEventListener('keydown', function (e) {
+              if (lb.hidden) return;
+              if (e.key === 'Escape') lb.hidden = true;
+              else if (e.key === 'ArrowLeft') lb.querySelector('.lightbox-prev').click();
+              else if (e.key === 'ArrowRight') lb.querySelector('.lightbox-next').click();
+            });
+          })();
+        </script>
+
+    </div>
+    <script src="../../js/site.js"></script>
+  </body>
+</html>

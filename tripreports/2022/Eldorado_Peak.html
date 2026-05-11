@@ -1,25 +1,152 @@
+<!DOCTYPE html>
 <html>
   <head>
+      <meta charset="utf-8">
       <link rel="stylesheet" href="../../css/style.css">
       <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-    <script>
-    !function(t,e){var o,n,p,r;e.__SV||(window.posthog=e,e._i=[],e.init=function(i,s,a){function g(t,e){var o=e.split(".");2==o.length&&(t=t[o[0]],e=o[1]),t[e]=function(){t.push([e].concat(Array.prototype.slice.call(arguments,0)))}}(p=t.createElement("script")).type="text/javascript",p.async=!0,p.src=s.api_host.replace(".i.posthog.com","-assets.i.posthog.com")+"/static/array.js",(r=t.getElementsByTagName("script")[0]).parentNode.insertBefore(p,r);var u=e;for(void 0!==a?u=e[a]=[]:a="posthog",u.people=u.people||[],u.toString=function(t){var e="posthog";return"posthog"!==a&&(e+="."+a),t||(e+=" (stub)"),e},u.people.toString=function(){return u.toString(1)+".people (stub)"},o="capture identify alias people.set people.set_once set_config register register_once unregister opt_out_capturing has_opted_out_capturing opt_in_capturing reset isFeatureEnabled onFeatureFlags getFeatureFlag getFeatureFlagPayload reloadFeatureFlags group updateEarlyAccessFeatureEnrollment getEarlyAccessFeatures getActiveMatchingSurveys getSurveys getNextSurveyStep onSessionId setPersonProperties".split(" "),n=0;n<o.length;n++)g(u,o[n]);e._i.push([i,s,a])},e.__SV=1)}(document,window.posthog||[]);
-    posthog.init('phc_6TmAWPHDnvSwkkXT8wiSFtPUCfpQ3YPN2h5KoMiVryo',{api_host:'https://us.i.posthog.com', person_profiles: 'identified_only' // or 'always' to create profiles for anonymous users as well
-        })
-      </script>
+      <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
+      <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+      <script src="https://unpkg.com/leaflet-gpx@1.7.0/gpx.js"></script>
   </head>
   <body>
     <div class="content col-6">
         <a href="../../tripreports.html">Trip Reports</a>
         <h1>Eldorado Peak</h1>
         <p class="summary">
-            <strong>Region:</strong> North Cascades, WA<br/>
-            <strong>Date:</strong> Mid-October 2022<br/>
-            <strong>Weather conditions:</strong> Warm and sunny, moderate cool breeze<br/>
-            <strong>Distance:</strong> 6.5 miles round-trip<br/>
-            <strong>Gain:</strong> 4,149 feet<br/>
-            <strong>Duration:</strong> 11.5 hours<br/>
+            <strong>Region:</strong> North Cascades National Park, WA<br/>
+            <strong>Date:</strong> 2022-10-15 (08:23&ndash;19:51 PDT)<br/>
+            <strong>Distance:</strong> 6.52 miles<br/>
+            <strong>Gain:</strong> 4,159 feet<br/>
+            <strong>Duration:</strong> 11h 27m (6h 13m moving, 5h 14m stopped)<br/>
+            <strong>Avg speed:</strong> 1.05 mph moving / 0.57 mph overall<br/>
+            <strong>Weather:</strong> Clear. Temps 52&ndash;75&deg;F, ESE winds 3&ndash;6 mph, no precipitation.<br/>
         </p>
+
+        <h3>Route</h3>
+        <div id="map" style="height:420px;width:100%;margin-bottom:1em;"></div>
+        <script>
+          (function () {
+            var map = L.map('map');
+            var satellite = L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}', {
+              maxZoom: 19,
+              attribution: 'Tiles &copy; Esri &mdash; Source: Esri, i-cubed, USDA, USGS, AEX, GeoEye, Getmapping, Aerogrid, IGN, IGP, UPR-EGP, and the GIS User Community'
+            }).addTo(map);
+            var topo = L.tileLayer('https://{s}.tile.opentopomap.org/{z}/{x}/{y}.png', {
+              maxZoom: 17,
+              opacity: 0.5,
+              attribution: 'Map data: &copy; OpenStreetMap contributors, SRTM | Map style: &copy; OpenTopoMap (CC-BY-SA)'
+            }).addTo(map);
+
+            var BlendControl = L.Control.extend({
+              options: { position: 'topright' },
+              onAdd: function () {
+                var div = L.DomUtil.create('div', 'leaflet-bar');
+                div.style.background = 'white';
+                div.style.padding = '6px 8px';
+                div.style.font = '12px/1.2 sans-serif';
+                div.innerHTML =
+                  '<div style="display:flex;justify-content:space-between;"><span>Satellite</span><span>Topo</span></div>' +
+                  '<input type="range" min="0" max="100" value="50" style="width:140px;display:block;">';
+                var slider = div.querySelector('input');
+                L.DomEvent.disableClickPropagation(div);
+                L.DomEvent.on(slider, 'input', function () {
+                  topo.setOpacity(slider.value / 100);
+                });
+                return div;
+              }
+            });
+            new BlendControl().addTo(map);
+
+            new L.GPX('../../img/eldorado_1/track.gpx', {
+              async: true,
+              polyline_options: { color: 'red', weight: 3, opacity: 0.9 },
+              marker_options: {
+                startIconUrl: null, endIconUrl: null, shadowUrl: null
+              }
+            }).on('loaded', function (e) {
+              map.fitBounds(e.target.getBounds(), { padding: [20, 20] });
+            }).addTo(map);
+
+            window.tripMap = map;
+          })();
+        </script>
+        <h3>Elevation Profile</h3>
+        <img src="../../img/eldorado_1/elevation.png" width="600"/>
+
+        <div id="gallery-strip" class="gallery-strip"></div>
+        <div id="lightbox" class="lightbox" hidden>
+          <button class="lightbox-close" aria-label="Close">&times;</button>
+          <button class="lightbox-prev" aria-label="Previous">&#10094;</button>
+          <img class="lightbox-img" alt=""/>
+          <button class="lightbox-next" aria-label="Next">&#10095;</button>
+          <div class="lightbox-caption"></div>
+        </div>
+        <script>
+          (function () {
+            var photos = [{"file": "IMG_0804(1).jpg", "time": "2022-10-15T10:22:37", "lat": 48.50316111111111, "lon": -121.119225}, {"file": "IMG_0805(1).jpg", "time": "2022-10-15T10:36:36", "lat": 48.50387222222222, "lon": -121.11937777777777}, {"file": "IMG_0806(1).jpg", "time": "2022-10-15T10:36:40", "lat": 48.50389166666667, "lon": -121.11935555555554}, {"file": "IMG_0807(1).jpg", "time": "2022-10-15T10:36:48", "lat": 48.503880555555554, "lon": -121.11937777777777}, {"file": "IMG_0808(1).jpg", "time": "2022-10-15T10:36:53", "lat": 48.50387222222222, "lon": -121.11937777777777}, {"file": "IMG_0811(1).jpg", "time": "2022-10-15T10:37:26", "lat": 48.50385, "lon": -121.11936944444444}, {"file": "IMG_0812(1).jpg", "time": "2022-10-15T10:37:30", "lat": 48.50385, "lon": -121.11936944444444}, {"file": "IMG_0813(1).jpg", "time": "2022-10-15T10:37:33", "lat": 48.50385, "lon": -121.1193611111111}, {"file": "IMG_0819(1).jpg", "time": "2022-10-15T11:12:48", "lat": 48.50452777777778, "lon": -121.11958333333332}, {"file": "IMG_0820(1).jpg", "time": "2022-10-15T11:48:15", "lat": 48.505433333333336, "lon": -121.11948333333332}, {"file": "IMG_0823.jpg", "time": "2022-10-15T12:16:10", "lat": 48.50761111111111, "lon": -121.11837777777777}, {"file": "IMG_0824(1).jpg", "time": "2022-10-15T12:16:13", "lat": 48.50759166666667, "lon": -121.1183861111111}, {"file": "IMG_0825(1).jpg", "time": "2022-10-15T12:17:05", "lat": 48.507508333333334, "lon": -121.11842222222222}, {"file": "IMG_0826(1).jpg", "time": "2022-10-15T12:17:09", "lat": 48.507508333333334, "lon": -121.11842222222222}, {"file": "IMG_0827(1).jpg", "time": "2022-10-15T13:15:32", "lat": 48.511783333333334, "lon": -121.11781388888888}, {"file": "IMG_0829(1).jpg", "time": "2022-10-15T13:15:36", "lat": 48.511783333333334, "lon": -121.11781388888888}, {"file": "IMG_0830(1).jpg", "time": "2022-10-15T13:15:37", "lat": 48.511783333333334, "lon": -121.11781388888888}, {"file": "IMG_0831(1).jpg", "time": "2022-10-15T13:15:39", "lat": 48.511783333333334, "lon": -121.11781388888888}, {"file": "IMG_0832.jpg", "time": "2022-10-15T13:35:07", "lat": 48.513875, "lon": -121.11816388888889}, {"file": "IMG_0834(1).jpg", "time": "2022-10-15T13:35:29", "lat": 48.51388055555555, "lon": -121.11817222222221}, {"file": "IMG_0835(1).jpg", "time": "2022-10-15T13:35:35", "lat": 48.51388055555555, "lon": -121.11817222222221}, {"file": "IMG_0836.jpg", "time": "2022-10-15T13:35:37", "lat": 48.51388055555555, "lon": -121.11817222222221}, {"file": "IMG_0838.jpg", "time": "2022-10-15T13:40:54", "lat": 48.51387777777778, "lon": -121.11816388888889}, {"file": "IMG_0840(1).jpg", "time": "2022-10-15T13:45:27", "lat": 48.513875, "lon": -121.11817222222221}, {"file": "IMG_0841(1).jpg", "time": "2022-10-15T13:45:28", "lat": 48.513875, "lon": -121.11817222222221}, {"file": "03198D69-68B0-4053-8BE2-CB71C8F55391.jpg", "time": "2022-10-15T13:45:28", "lat": 48.513875, "lon": -121.11817222222221}, {"file": "IMG_0842(1).jpg", "time": "2022-10-15T14:36:15", "lat": 48.51671944444444, "lon": -121.12049999999999}];
+            if (!photos.length) return;
+            var slug = "eldorado_1";
+            var stripEl = document.getElementById('gallery-strip');
+            photos.forEach(function (p, i) {
+              var img = document.createElement('img');
+              img.src = '../../img/' + slug + '/' + p.file;
+              img.loading = 'lazy';
+              img.dataset.idx = i;
+              img.addEventListener('click', function () { openLightbox(i); });
+              stripEl.appendChild(img);
+            });
+
+            // Map dots: clickable markers on the route map sharing the same map instance.
+            // The route-map block defines `map` inside an IIFE; re-resolve via DOM.
+            // We attach to window.tripMap if exposed; otherwise we wait briefly.
+            function addMapDots() {
+              var m = window.tripMap;
+              if (!m) { setTimeout(addMapDots, 200); return; }
+              photos.forEach(function (p, i) {
+                if (p.lat == null || p.lon == null) return;
+                var dot = L.divIcon({
+                  className: '',
+                  html: '<div class="photo-dot" data-idx="' + i + '"></div>',
+                  iconSize: [10, 10], iconAnchor: [5, 5]
+                });
+                var mk = L.marker([p.lat, p.lon], { icon: dot }).addTo(m);
+                mk.on('click', function () { openLightbox(i); });
+                p._marker = mk;
+              });
+            }
+            addMapDots();
+
+            var lb = document.getElementById('lightbox');
+            var lbImg = lb.querySelector('.lightbox-img');
+            var lbCap = lb.querySelector('.lightbox-caption');
+            var cur = 0;
+            function openLightbox(i) {
+              cur = i; render(); lb.hidden = false;
+            }
+            function render() {
+              var p = photos[cur];
+              lbImg.src = '../../img/' + slug + '/' + p.file;
+              lbCap.textContent = (cur + 1) + ' / ' + photos.length + (p.time ? ' — ' + p.time.replace('T', ' ').slice(0, 16) : '');
+              // Highlight current marker
+              photos.forEach(function (q, j) {
+                if (!q._marker) return;
+                var el = q._marker.getElement();
+                if (el) el.querySelector('.photo-dot').classList.toggle('active', j === cur);
+              });
+            }
+            lb.querySelector('.lightbox-close').onclick = function () { lb.hidden = true; };
+            lb.querySelector('.lightbox-prev').onclick = function () { cur = (cur - 1 + photos.length) % photos.length; render(); };
+            lb.querySelector('.lightbox-next').onclick = function () { cur = (cur + 1) % photos.length; render(); };
+            document.addEventListener('keydown', function (e) {
+              if (lb.hidden) return;
+              if (e.key === 'Escape') lb.hidden = true;
+              else if (e.key === 'ArrowLeft') lb.querySelector('.lightbox-prev').click();
+              else if (e.key === 'ArrowRight') lb.querySelector('.lightbox-next').click();
+            });
+          })();
+        </script>
+
+
         <h3>Trip Report</h3>
         <img src="../../img/eldorado/03.JPEG" width="500"/>
         <p>
@@ -30,7 +157,6 @@
         </p>
         <img src="../../img/eldorado/05.JPEG" width="500"/>
         <img src="../../img/eldorado/07.JPEG" width="280"/>
-        <img src="../../img/eldorado/26.jpeg" width="500"/>
         <p>
             Level 2 - The boulder fields. There are a couple fields that the trail crosses. Lots of fun scrambling is involved,
             but it does get more difficult once you veer off-trail. This took a lot of energy on the way back down.
@@ -42,7 +168,6 @@
         <p>
             Views from the low camp in the high country. This time of the year those red flowers (whatever they are called) are really vibrant.
         </p>
-        <img src="../../img/eldorado/44.jpg" width="210"/>
         <p>
             This is the view from the other side of the ridge shown in the previous picture.
             We decided to turn back once we had Eldorado Peak in view. Suddenly the scrambling got really tough. 
@@ -51,8 +176,9 @@
             For safety, we decided to turn back and hike back down to the car. As excited as I was to camp on the glacier, I was a
             little bit relieved.
         </p>
-        <img src="../../img/eldorado/43.jpeg" width="500"/>
+        <img src="../../img/eldorado/eld30.JPEG" width="500"/>
         <p>Packing list.</p>
+
     </div>
     <script src="../../js/site.js"></script>
   </body>

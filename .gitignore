@@ -1,0 +1,14 @@
+# Python virtualenvs (heavy, OS-specific)
+.venv/
+**/.venv/
+__pycache__/
+*.pyc
+
+# Claude session state (user-local)
+.claude/
+
+# Local diagnostic outputs
+tools/broken-images.json
+
+# Local utility logs
+/tmp/

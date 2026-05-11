@@ -4,13 +4,19 @@ body {
     background-color: #345345;
 }
 
-img {
+img, .leaflet-container {
+    border-radius: 10px;
+    box-shadow: 0 2px 12px 0 rgba(0,0,0,0.10);
     cursor: zoom-in;
     text-align: center;
     margin-left: auto;
     margin-right: auto;
     width: 100%;
     display: block;
+    max-width: 600px;
+    margin-bottom: 1.5em;
+}
+    box-sizing: border-box;
 }
 
 /* For mobile phones: */
@@ -72,4 +78,52 @@ div.content p {
 
 a, a:visited {
     color: #6ea661;
+}
+
+/* Photo gallery + lightbox (used by trip reports) */
+.gallery-strip {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(110px, 1fr));
+    gap: 6px;
+    margin: 1em 0;
+}
+.gallery-strip img {
+    width: 100%;
+    aspect-ratio: 1 / 1;
+    object-fit: cover;
+    margin: 0;
+    border-radius: 6px;
+    box-shadow: none;
+    max-width: none;
+    cursor: zoom-in;
+}
+.photo-dot {
+    width: 10px; height: 10px; border-radius: 50%;
+    background: #ffd23f; border: 2px solid white;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.4);
+}
+.photo-dot.active {
+    background: #ff5b3e; transform: scale(1.4); transition: transform 0.1s;
+}
+.lightbox {
+    position: fixed; inset: 0; background: rgba(0,0,0,0.92);
+    display: flex; align-items: center; justify-content: center;
+    z-index: 9999;
+}
+.lightbox[hidden] { display: none; }
+.lightbox-img {
+    max-width: 92vw; max-height: 88vh; object-fit: contain;
+    border-radius: 6px; margin: 0; box-shadow: none; cursor: default;
+}
+.lightbox-close, .lightbox-prev, .lightbox-next {
+    position: absolute; background: rgba(0,0,0,0.5); color: white;
+    border: none; font-size: 28px; padding: 8px 14px; cursor: pointer;
+    border-radius: 4px;
+}
+.lightbox-close { top: 12px; right: 12px; }
+.lightbox-prev { left: 12px; top: 50%; transform: translateY(-50%); }
+.lightbox-next { right: 12px; top: 50%; transform: translateY(-50%); }
+.lightbox-caption {
+    position: absolute; bottom: 16px; left: 0; right: 0;
+    color: #ccc; text-align: center; font: 12px/1.4 sans-serif;
 }

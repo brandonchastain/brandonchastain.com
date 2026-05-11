@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html>
+  <head>
+      <meta charset="utf-8">
+      <link rel="stylesheet" href="../../css/style.css">
+      <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+      <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
+      <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+      <script src="https://unpkg.com/leaflet-gpx@1.7.0/gpx.js"></script>
+  </head>
+  <body>
+    <div class="content col-6">
+        <a href="../../tripreports.html">Trip Reports</a>
+        <h1>Davis Peak</h1>
+        <p class="summary">
+            <strong>Region:</strong> Alpine Lakes Wilderness, Okanogan-Wenatchee NF, WA<br/>
+            <strong>Date:</strong> 2019-07-13 (15:53&ndash;18:02 PDT)<br/>
+            <strong>Duration:</strong> 2h 9m (unknown moving, unknown stopped)<br/>
+            <strong>Weather:</strong> Mainly clear at start, overcast by the descent. Temps 51&ndash;56&deg;F, WNW winds ~9 mph, no precipitation.<br/>
+        </p>
+
+        <h3>Route</h3>
+        <div id="map" style="height:420px;width:100%;margin-bottom:1em;"></div>
+        <script>
+          (function () {
+            var map = L.map('map');
+            var satellite = L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}', {
+              maxZoom: 19,
+              attribution: 'Tiles &copy; Esri &mdash; Source: Esri, i-cubed, USDA, USGS, AEX, GeoEye, Getmapping, Aerogrid, IGN, IGP, UPR-EGP, and the GIS User Community'
+            }).addTo(map);
+            var topo = L.tileLayer('https://{s}.tile.opentopomap.org/{z}/{x}/{y}.png', {
+              maxZoom: 17,
+              opacity: 0.5,
+              attribution: 'Map data: &copy; OpenStreetMap contributors, SRTM | Map style: &copy; OpenTopoMap (CC-BY-SA)'
+            }).addTo(map);
+
+            var BlendControl = L.Control.extend({
+              options: { position: 'topright' },
+              onAdd: function () {
+                var div = L.DomUtil.create('div', 'leaflet-bar');
+                div.style.background = 'white';
+                div.style.padding = '6px 8px';
+                div.style.font = '12px/1.2 sans-serif';
+                div.innerHTML =
+                  '<div style="display:flex;justify-content:space-between;"><span>Satellite</span><span>Topo</span></div>' +
+                  '<input type="range" min="0" max="100" value="50" style="width:140px;display:block;">';
+                var slider = div.querySelector('input');
+                L.DomEvent.disableClickPropagation(div);
+                L.DomEvent.on(slider, 'input', function () {
+                  topo.setOpacity(slider.value / 100);
+                });
+                return div;
+              }
+            });
+            new BlendControl().addTo(map);
+
+            map.setView([47.44802, -121.07953], 13);
+            L.marker([47.44802, -121.07953]).addTo(map);
+
+            window.tripMap = map;
+          })();
+        </script>
+
+        <div id="gallery-strip" class="gallery-strip"></div>
+        <div id="lightbox" class="lightbox" hidden>
+          <button class="lightbox-close" aria-label="Close">&times;</button>
+          <button class="lightbox-prev" aria-label="Previous">&#10094;</button>
+          <img class="lightbox-img" alt=""/>
+          <button class="lightbox-next" aria-label="Next">&#10095;</button>
+          <div class="lightbox-caption"></div>
+        </div>
+        <script>
+          (function () {
+            var photos = [{"file": "IMG_0926(2).jpg", "time": "2019-07-13T15:53:14", "lat": 47.43767222222222, "lon": -121.08347222222221}, {"file": "IMG_0946(2).jpg", "time": "2019-07-13T16:12:13", "lat": 47.44088055555555, "lon": -121.08403055555556}, {"file": "IMG_0954.JPEG", "time": "2019-07-13T16:18:38", "lat": 47.44173055555555, "lon": -121.08342777777777}, {"file": "IMG_0956.JPEG", "time": "2019-07-13T16:18:39", "lat": 47.44173333333333, "lon": -121.08343611111111}, {"file": "IMG_0957(2).jpg", "time": "2019-07-13T16:18:40", "lat": 47.44173333333333, "lon": -121.08342777777777}, {"file": "IMG_0959(2).jpg", "time": "2019-07-13T16:41:00", "lat": 47.42380555555555, "lon": -121.07949722222222}, {"file": "IMG_0961(2).jpg", "time": "2019-07-13T17:05:28", "lat": 47.44852777777778, "lon": -121.08038333333333}, {"file": "IMG_0962(1).jpg", "time": "2019-07-13T17:05:37", "lat": 47.448525, "lon": -121.08037499999999}, {"file": "IMG_0963(1).jpg", "time": "2019-07-13T17:05:40", "lat": 47.44852777777778, "lon": -121.08036666666666}, {"file": "IMG_0967(1).jpg", "time": "2019-07-13T17:21:42", "lat": 47.45098611111111, "lon": -121.08499166666667}, {"file": "IMG_0968(2).jpg", "time": "2019-07-13T17:22:04", "lat": 47.450858333333336, "lon": -121.08499166666667}, {"file": "IMG_0969(2).jpg", "time": "2019-07-13T17:22:05", "lat": 47.45086666666667, "lon": -121.08498333333333}, {"file": "IMG_0970(1).jpg", "time": "2019-07-13T17:22:07", "lat": 47.45086666666667, "lon": -121.08498333333333}, {"file": "IMG_0971(1).jpg", "time": "2019-07-13T17:22:09", "lat": 47.450875, "lon": -121.08496944444444}, {"file": "IMG_0972(2).jpg", "time": "2019-07-13T17:22:20", "lat": 47.45090555555556, "lon": -121.08496944444444}, {"file": "IMG_0973.jpg", "time": "2019-07-13T17:22:23", "lat": 47.450900000000004, "lon": -121.084975}, {"file": "IMG_0979(1).jpg", "time": "2019-07-13T17:54:21", "lat": 47.44842499999999, "lon": -121.08013888888888}, {"file": "IMG_0984(1).jpg", "time": "2019-07-13T18:01:56", "lat": 47.44720833333333, "lon": -121.08208333333333}, {"file": "IMG_0985(1).jpg", "time": "2019-07-13T18:01:57", "lat": 47.447205555555556, "lon": -121.08207777777777}, {"file": "IMG_0986(1).jpg", "time": "2019-07-13T18:02:28", "lat": 47.44716388888889, "lon": -121.08226666666667}];
+            if (!photos.length) return;
+            var slug = "davis-peak-hiked-with-will-dogs";
+            var stripEl = document.getElementById('gallery-strip');
+            photos.forEach(function (p, i) {
+              var img = document.createElement('img');
+              img.src = '../../img/' + slug + '/' + p.file;
+              img.loading = 'lazy';
+              img.dataset.idx = i;
+              img.addEventListener('click', function () { openLightbox(i); });
+              stripEl.appendChild(img);
+            });
+
+            // Map dots: clickable markers on the route map sharing the same map instance.
+            // The route-map block defines `map` inside an IIFE; re-resolve via DOM.
+            // We attach to window.tripMap if exposed; otherwise we wait briefly.
+            function addMapDots() {
+              var m = window.tripMap;
+              if (!m) { setTimeout(addMapDots, 200); return; }
+              photos.forEach(function (p, i) {
+                if (p.lat == null || p.lon == null) return;
+                var dot = L.divIcon({
+                  className: '',
+                  html: '<div class="photo-dot" data-idx="' + i + '"></div>',
+                  iconSize: [10, 10], iconAnchor: [5, 5]
+                });
+                var mk = L.marker([p.lat, p.lon], { icon: dot }).addTo(m);
+                mk.on('click', function () { openLightbox(i); });
+                p._marker = mk;
+              });
+            }
+            addMapDots();
+
+            var lb = document.getElementById('lightbox');
+            var lbImg = lb.querySelector('.lightbox-img');
+            var lbCap = lb.querySelector('.lightbox-caption');
+            var cur = 0;
+            function openLightbox(i) {
+              cur = i; render(); lb.hidden = false;
+            }
+            function render() {
+              var p = photos[cur];
+              lbImg.src = '../../img/' + slug + '/' + p.file;
+              lbCap.textContent = (cur + 1) + ' / ' + photos.length + (p.time ? ' — ' + p.time.replace('T', ' ').slice(0, 16) : '');
+              // Highlight current marker
+              photos.forEach(function (q, j) {
+                if (!q._marker) return;
+                var el = q._marker.getElement();
+                if (el) el.querySelector('.photo-dot').classList.toggle('active', j === cur);
+              });
+            }
+            lb.querySelector('.lightbox-close').onclick = function () { lb.hidden = true; };
+            lb.querySelector('.lightbox-prev').onclick = function () { cur = (cur - 1 + photos.length) % photos.length; render(); };
+            lb.querySelector('.lightbox-next').onclick = function () { cur = (cur + 1) % photos.length; render(); };
+            document.addEventListener('keydown', function (e) {
+              if (lb.hidden) return;
+              if (e.key === 'Escape') lb.hidden = true;
+              else if (e.key === 'ArrowLeft') lb.querySelector('.lightbox-prev').click();
+              else if (e.key === 'ArrowRight') lb.querySelector('.lightbox-next').click();
+            });
+          })();
+        </script>
+
+    </div>
+    <script src="../../js/site.js"></script>
+  </body>
+</html>
