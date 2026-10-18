@@ -45,15 +45,17 @@ public sealed record RepoActivity(
 /// <summary>The window a run covers, inclusive start, exclusive end.</summary>
 public sealed record WeekWindow(DateTimeOffset Start, DateTimeOffset End)
 {
-    /// <summary>ISO 8601 week id of the week the window ends in, e.g. 2026-W42.</summary>
+    /// <summary>
+    /// ISO 8601 week id for the window, e.g. 2026-W42. Taken from the window's midpoint so a run that
+    /// fires just after midnight UTC on Monday (Sunday evening Pacific) is still labeled with the week it covers.
+    /// </summary>
     public string IsoWeekId
     {
         get
         {
-            // End is exclusive, so the last covered instant is one tick earlier.
-            var last = End.AddTicks(-1).UtcDateTime;
-            var year = System.Globalization.ISOWeek.GetYear(last);
-            var week = System.Globalization.ISOWeek.GetWeekOfYear(last);
+            var mid = (Start + (End - Start) / 2).UtcDateTime;
+            var year = System.Globalization.ISOWeek.GetYear(mid);
+            var week = System.Globalization.ISOWeek.GetWeekOfYear(mid);
             return $"{year}-W{week:00}";
         }
     }
