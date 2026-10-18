@@ -77,6 +77,7 @@ public static partial class MarkdownWriter
         sb.AppendLine("      <title>Shipped - Brandon Chastain</title>");
         sb.AppendLine("      <link rel=\"stylesheet\" href=\"../css/style.css\">");
         sb.AppendLine("      <meta name=\"viewport\" content=\"width=device-width, initial-scale=1, maximum-scale=1\">");
+        sb.AppendLine("      <style>details { margin: 1em 0 1.5em; } summary { cursor: pointer; }</style>");
         sb.AppendLine("  </head>");
         sb.AppendLine("  <body>");
         sb.AppendLine("    <div class=\"content col-6\">");

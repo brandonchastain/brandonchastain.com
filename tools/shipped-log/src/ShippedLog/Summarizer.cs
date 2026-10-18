@@ -76,14 +76,15 @@ public static class SummaryInput
         var commits = active.Sum(r => r.Commits.Count);
         sb.AppendLine($"**Week in a sentence:** {commits} commit{Plural(commits)} and {prs} merged PR{Plural(prs)} across {active.Count} repo{Plural(active.Count)}.");
         sb.AppendLine();
-        sb.AppendLine("_AI summary unavailable this week; raw list follows._");
+        sb.AppendLine("_AI summary unavailable this week; the full list is under Raw activity below._");
+        sb.AppendLine();
         foreach (var repo in active)
         {
-            sb.AppendLine();
-            sb.AppendLine($"## {repo.Name}");
-            foreach (var pr in repo.MergedPullRequests) sb.AppendLine($"- PR #{pr.Number}: {pr.Title}");
-            foreach (var c in repo.Commits.OrderBy(c => c.Date)) sb.AppendLine($"- {c.Subject}");
-            foreach (var r in repo.Releases) sb.AppendLine($"- Release {r.Tag}");
+            var parts = new List<string>();
+            if (repo.MergedPullRequests.Count > 0) parts.Add($"{repo.MergedPullRequests.Count} PR{Plural(repo.MergedPullRequests.Count)} merged");
+            if (repo.Commits.Count > 0) parts.Add($"{repo.Commits.Count} commit{Plural(repo.Commits.Count)}");
+            if (repo.Releases.Count > 0) parts.Add($"release{Plural(repo.Releases.Count)} {string.Join(", ", repo.Releases.Select(r => r.Tag))}");
+            sb.AppendLine($"- **{repo.Name}**: {string.Join(", ", parts)}");
         }
         return sb.ToString().TrimEnd();
     }

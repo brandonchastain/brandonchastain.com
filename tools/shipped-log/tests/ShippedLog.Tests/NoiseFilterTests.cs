@@ -88,9 +88,14 @@ public class NoiseFilterTests
         var md = MarkdownWriter.RenderWeek(window, repos, summary);
 
         Assert.StartsWith("# 2026-W42", md);
-        Assert.Contains("## example/alpha", md);
-        Assert.Contains("## example/beta", md);
-        Assert.Contains("PR #42", md);
+        Assert.Contains("**example/alpha**", md);
+        Assert.Contains("**example/beta**", md);
+        // Fallback body stays short; the full list lives only inside the collapsible raw section.
+        var summaryPart = md[..md.IndexOf("<details>", StringComparison.Ordinal)];
+        var rawPart = md[md.IndexOf("<details>", StringComparison.Ordinal)..];
+        Assert.DoesNotContain("Relevance scoring", summaryPart);
+        Assert.Contains("**example/alpha**: 1 PR merged, 2 commits", summaryPart);
+        Assert.Contains("PR [#42]", rawPart);
         Assert.DoesNotContain("Bump Microsoft.Data.Sqlite", md);
         Assert.DoesNotContain("quiet-repo", md);
         Assert.Equal("3 commits and 1 merged PR across 2 repos.", MarkdownWriter.OneLiner(summary));
