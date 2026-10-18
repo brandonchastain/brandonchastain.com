@@ -12,3 +12,5 @@ tools/broken-images.json
 
 # Local utility logs
 /tmp/
+tools/shipped-log/**/bin/
+tools/shipped-log/**/obj/

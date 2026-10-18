@@ -1,0 +1,16 @@
+name: Release notes bot (tests)
+on:
+  push:
+    paths: ["tools/shipped-log/**", ".github/workflows/release-notes*.yml"]
+  pull_request:
+    paths: ["tools/shipped-log/**", ".github/workflows/release-notes*.yml"]
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: "9.0.x"
+      - run: dotnet test tools/shipped-log/ShippedLog.sln -c Release
+      - run: dotnet run --project tools/shipped-log/src/ShippedLog -c Release -- --dry-run --no-ai --fixture tools/shipped-log/tests/ShippedLog.Tests/fixtures/sample-week.json --end 2026-10-19

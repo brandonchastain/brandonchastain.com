@@ -1,0 +1,46 @@
+[
+  {
+    "name": "example/alpha",
+    "url": "https://github.com/example/alpha",
+    "defaultBranch": "main",
+    "commits": [
+      { "sha": "a1b2c3d4e5f6", "subject": "Add AI tag suggestions with confirm/reject", "body": "Haiku proposes tags; user confirms or rejects inline.", "authorLogin": "brandonchastain", "date": "2026-10-13T18:00:00Z", "parentCount": 1 },
+      { "sha": "b2c3d4e5f6a1", "subject": "Merge branch 'feature/tags' into main", "body": "", "authorLogin": "brandonchastain", "date": "2026-10-13T18:05:00Z", "parentCount": 2 },
+      { "sha": "c3d4e5f6a1b2", "subject": "Bump Microsoft.Data.Sqlite from 9.0.1 to 9.0.3", "body": "", "authorLogin": "dependabot[bot]", "date": "2026-10-14T03:00:00Z", "parentCount": 1 },
+      { "sha": "d4e5f6a1b2c3", "subject": "dotnet format", "body": "", "authorLogin": "brandonchastain", "date": "2026-10-14T19:00:00Z", "parentCount": 1 },
+      { "sha": "e5f6a1b2c3d4", "subject": "Fix formatting of dates in the export view", "body": "", "authorLogin": "brandonchastain", "date": "2026-10-15T20:00:00Z", "parentCount": 1 }
+    ],
+    "mergedPullRequests": [
+      { "number": 42, "title": "Relevance scoring for feed items", "body": "Scores items 0-100 and hides below threshold.", "mergedAt": "2026-10-16T22:00:00Z", "url": "https://github.com/example/alpha/pull/42" },
+      { "number": 43, "title": "chore(deps): update dependency xunit to v2.9", "body": "", "mergedAt": "2026-10-16T23:00:00Z", "url": "https://github.com/example/alpha/pull/43" }
+    ],
+    "releases": [],
+    "deployments": [
+      { "environment": "production", "state": "created", "createdAt": "2026-10-16T23:30:00Z" }
+    ]
+  },
+  {
+    "name": "example/beta",
+    "url": "https://github.com/example/beta",
+    "defaultBranch": "main",
+    "commits": [
+      { "sha": "f1e2d3c4b5a6", "subject": "Implement bidding round and nil bids", "body": "", "authorLogin": "brandonchastain", "date": "2026-10-18T02:00:00Z", "parentCount": 1 }
+    ],
+    "mergedPullRequests": [],
+    "releases": [
+      { "tag": "v0.1.0", "name": "First playable", "body": "", "publishedAt": "2026-10-18T03:00:00Z", "url": "https://github.com/example/beta/releases/tag/v0.1.0" }
+    ],
+    "deployments": []
+  },
+  {
+    "name": "example/quiet",
+    "url": "https://github.com/example/quiet",
+    "defaultBranch": "main",
+    "commits": [
+      { "sha": "0a0b0c0d0e0f", "subject": "Merge pull request #7 from brandonchastain/fix", "body": "", "authorLogin": "brandonchastain", "date": "2026-10-17T00:00:00Z", "parentCount": 2 }
+    ],
+    "mergedPullRequests": [],
+    "releases": [],
+    "deployments": []
+  }
+]
