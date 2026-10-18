@@ -16,6 +16,16 @@ using var cts = new CancellationTokenSource();
 Console.CancelKeyPress += (_, e) => { e.Cancel = true; cts.Cancel(); };
 var ct = cts.Token;
 
+if (options.RebuildPage)
+{
+    // Used by the site deploy: regenerate release-notes/index.html from the committed week files.
+    // No GitHub, no model, no notification.
+    var siteRoot = options.Out ?? Directory.GetCurrentDirectory();
+    var count = RebuildPage(siteRoot);
+    log.WriteLine($"Rebuilt {MarkdownWriter.PageFile} from {count} week file(s).");
+    return 0;
+}
+
 var window = WeekWindow.EndingAt(options.End ?? DateTimeOffset.UtcNow);
 log.WriteLine($"Window: {window.Start:u} -> {window.End:u} ({window.IsoWeekId})");
 
@@ -102,12 +112,8 @@ var weekPath = Path.Combine(root, MarkdownWriter.WeekFileName(window));
 await File.WriteAllTextAsync(weekPath, weekMarkdown, ct);
 log.WriteLine($"Wrote {weekPath}");
 
-var weeks = Directory.EnumerateFiles(weeksDir, "*.md")
-    .Select(p => (WeekId: Path.GetFileNameWithoutExtension(p), Markdown: File.ReadAllText(p)))
-    .ToList();
-var pagePath = Path.Combine(root, MarkdownWriter.PageFile);
-await File.WriteAllTextAsync(pagePath, MarkdownWriter.RenderSitePage(weeks), ct);
-log.WriteLine($"Wrote {pagePath} ({weeks.Count} week(s))");
+var weekCount = RebuildPage(root);
+log.WriteLine($"Wrote {MarkdownWriter.PageFile} ({weekCount} week(s))");
 
 // 6. Notify (skip quiet weeks)
 var notifier = NtfyNotifier.FromEnvironment();
@@ -135,11 +141,26 @@ else
 }
 return 0;
 
-sealed record CliArgs(bool DryRun, bool NoAi, DateTimeOffset? End, string? Fixture, string? Out)
+/// <summary>Regenerates release-notes/index.html from every week file; returns how many weeks it found.</summary>
+static int RebuildPage(string siteRoot)
+{
+    var weeksDir = Path.Combine(siteRoot, MarkdownWriter.WeeksDir);
+    var weeks = Directory.Exists(weeksDir)
+        ? Directory.EnumerateFiles(weeksDir, "*.md")
+            .Select(p => (WeekId: Path.GetFileNameWithoutExtension(p), Markdown: File.ReadAllText(p)))
+            .ToList()
+        : [];
+    var pagePath = Path.Combine(siteRoot, MarkdownWriter.PageFile);
+    Directory.CreateDirectory(Path.GetDirectoryName(pagePath)!);
+    File.WriteAllText(pagePath, MarkdownWriter.RenderSitePage(weeks));
+    return weeks.Count;
+}
+
+sealed record CliArgs(bool DryRun, bool NoAi, bool RebuildPage, DateTimeOffset? End, string? Fixture, string? Out)
 {
     public static CliArgs Parse(string[] argv)
     {
-        bool dry = false, noAi = false;
+        bool dry = false, noAi = false, rebuild = false;
         DateTimeOffset? end = null;
         string? fixture = null, outDir = null;
         for (var i = 0; i < argv.Length; i++)
@@ -148,12 +169,13 @@ sealed record CliArgs(bool DryRun, bool NoAi, DateTimeOffset? End, string? Fixtu
             {
                 case "--dry-run": dry = true; break;
                 case "--no-ai": noAi = true; break;
+                case "--rebuild-page": rebuild = true; break;
                 case "--end": end = DateTimeOffset.Parse(argv[++i], null, System.Globalization.DateTimeStyles.AssumeUniversal); break;
                 case "--fixture": fixture = argv[++i]; break;
                 case "--out": outDir = argv[++i]; break;
                 default: throw new ArgumentException($"Unknown argument: {argv[i]}");
             }
         }
-        return new CliArgs(dry, noAi, end, fixture, outDir);
+        return new CliArgs(dry, noAi, rebuild, end, fixture, outDir);
     }
 }
