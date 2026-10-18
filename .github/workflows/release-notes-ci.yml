@@ -1,9 +1,9 @@
 name: Release notes bot (tests)
 on:
   push:
-    paths: ["tools/shipped-log/**", ".github/workflows/shipped-log*.yml"]
+    paths: ["tools/shipped-log/**", ".github/workflows/release-notes*.yml"]
   pull_request:
-    paths: ["tools/shipped-log/**", ".github/workflows/shipped-log*.yml"]
+    paths: ["tools/shipped-log/**", ".github/workflows/release-notes*.yml"]
 jobs:
   test:
     runs-on: ubuntu-latest

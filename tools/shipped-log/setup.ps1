@@ -59,5 +59,5 @@ if (-not $SkipNtfy) {
 }
 
 Write-Host "`nDone. Dry-run the workflow now with:" -ForegroundColor Green
-Write-Host "  gh workflow run shipped-log.yml --repo $Repo -f dry_run=true"
+Write-Host "  gh workflow run release-notes.yml --repo $Repo -f dry_run=true"
 Write-Host "  gh run watch --repo $Repo"
