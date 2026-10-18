@@ -1,6 +1,6 @@
-name: Shipped log (weekly)
+name: Release notes (weekly)
 
-# Writes shipped/weeks/YYYY-Www.md and regenerates shipped/index.html, then commits to master.
+# Writes release-notes/weeks/YYYY-Www.md and regenerates release-notes/index.html, then commits to master.
 # The commit is pushed with SHIPPED_LOG_TOKEN (a PAT), not the built-in GITHUB_TOKEN, so the push
 # triggers the Azure Static Web Apps deploy workflows like any other push to master.
 
@@ -19,7 +19,7 @@ on:
         required: false
 
 concurrency:
-  group: shipped-log
+  group: release-notes
   cancel-in-progress: false
 
 jobs:
@@ -54,7 +54,7 @@ jobs:
         run: |
           git config user.name "shipped-log bot"
           git config user.email "actions@users.noreply.github.com"
-          git add shipped
+          git add release-notes
           if git diff --cached --quiet; then echo "Nothing to commit"; exit 0; fi
-          git commit -m "Shipped log $(ls shipped/weeks | sort | tail -n1 | sed 's/.md$//')"
+          git commit -m "Release notes $(ls release-notes/weeks | sort | tail -n1 | sed 's/.md$//')"
           git push

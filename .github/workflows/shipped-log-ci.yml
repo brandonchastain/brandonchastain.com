@@ -1,4 +1,4 @@
-name: Shipped log (tests)
+name: Release notes bot (tests)
 on:
   push:
     paths: ["tools/shipped-log/**", ".github/workflows/shipped-log*.yml"]

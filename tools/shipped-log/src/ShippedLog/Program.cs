@@ -4,7 +4,7 @@ using ShippedLog;
 // Usage:
 //   shipped-log [--dry-run] [--no-ai] [--end 2026-10-19] [--fixture path.json] [--out <site root>]
 //
-// Writes <site root>/shipped/weeks/YYYY-Www.md and regenerates <site root>/shipped/index.html.
+// Writes <site root>/release-notes/weeks/YYYY-Www.md and regenerates <site root>/release-notes/index.html.
 //
 // Env: GITHUB_TOKEN (required unless --fixture), ANTHROPIC_API_KEY (optional; fallback list without it),
 //      NTFY_TOPIC (private topic name; optional), NTFY_SERVER (default https://ntfy.sh), NTFY_ACCESS_TOKEN (optional),
@@ -71,7 +71,7 @@ if (repos.Count > 0)
 var weekMarkdown = MarkdownWriter.RenderWeek(window, repos, summary);
 var oneLiner = repos.Count == 0 ? MarkdownWriter.QuietWeekText : MarkdownWriter.OneLiner(summary!);
 var siteUrl = (Environment.GetEnvironmentVariable("SITE_URL") ?? "https://brandonchastain.com").TrimEnd('/');
-var pageLink = $"{siteUrl}/shipped/#{window.IsoWeekId}";
+var pageLink = $"{siteUrl}/release-notes/#{window.IsoWeekId}";
 
 if (options.DryRun)
 {
@@ -113,7 +113,7 @@ else
     var body = $"{oneLiner}\n\n{repos.Count} repo(s): {repoNames}";
     try
     {
-        await notifier.SendAsync($"Shipped {window.IsoWeekId}", body, pageLink, ct);
+        await notifier.SendAsync($"Release notes {window.IsoWeekId}", body, pageLink, ct);
         log.WriteLine("Notification sent.");
     }
     catch (Exception ex) when (ex is not OperationCanceledException)

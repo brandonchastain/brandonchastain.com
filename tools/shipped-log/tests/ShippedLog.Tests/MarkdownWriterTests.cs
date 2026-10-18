@@ -10,7 +10,7 @@ public class MarkdownWriterTests
     public void IsoWeekIdUsesLastCoveredInstant()
     {
         Assert.Equal("2026-W42", W42.IsoWeekId);
-        Assert.Equal("shipped/weeks/2026-W42.md", MarkdownWriter.WeekFileName(W42));
+        Assert.Equal("release-notes/weeks/2026-W42.md", MarkdownWriter.WeekFileName(W42));
         // Window ending Monday Jan 5 2026 00:00 covers Dec 29 to Jan 4, which is ISO 2026-W01.
         Assert.Equal("2026-W01", WeekWindow.EndingAt(new DateTimeOffset(2026, 1, 5, 0, 0, 0, TimeSpan.Zero)).IsoWeekId);
     }

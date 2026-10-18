@@ -1,9 +1,9 @@
 # shipped-log
 
-The bot behind [brandonchastain.com/shipped](https://brandonchastain.com/shipped/): a weekly log of what I shipped
-across my personal GitHub repos. Every Sunday evening the `Shipped log (weekly)` workflow collects the week's
+The bot behind [brandonchastain.com/release-notes](https://brandonchastain.com/release-notes/): weekly release notes for what I shipped
+across my personal GitHub repos. Every Sunday evening the `Release notes (weekly)` workflow collects the week's
 commits, merged PRs and releases, asks Claude Haiku for a short outcome-focused recap, writes
-`shipped/weeks/YYYY-Www.md`, regenerates `shipped/index.html`, commits to master (which deploys the site),
+`release-notes/weeks/YYYY-Www.md`, regenerates `release-notes/index.html`, commits to master (which deploys the site),
 and pings my phone via ntfy.
 
 ## How it works
@@ -11,7 +11,7 @@ and pings my phone via ntfy.
 1. `GitHubClient` lists my repos pushed in the last 7 days and pulls commits on the default branch (authored by me), merged PRs, releases and deployments.
 2. `NoiseFilter` drops merge commits, Dependabot/Renovate bumps, formatting-only commits, and squash-merge commits that duplicate a listed PR.
 3. `ClaudeSummarizer` sends the remaining items, grouped by repo, to `claude-haiku-5-5` with the prompt rules in `Summarizer.cs`. If the call fails it falls back to a plain list.
-4. `MarkdownWriter` renders the week file, then rebuilds the site page from every file in `shipped/weeks/` so the page is always the full archive, newest first. Quiet weeks still get a file so the log has no gaps, but no notification.
+4. `MarkdownWriter` renders the week file, then rebuilds the site page from every file in `release-notes/weeks/` so the page is always the full archive, newest first. Quiet weeks still get a file so the log has no gaps, but no notification.
 
 ## Setup
 

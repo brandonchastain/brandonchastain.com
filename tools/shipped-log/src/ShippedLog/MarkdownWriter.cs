@@ -6,8 +6,8 @@ namespace ShippedLog;
 public static partial class MarkdownWriter
 {
     public const string QuietWeekText = "No shipped changes this week.";
-    public const string WeeksDir = "shipped/weeks";
-    public const string PageFile = "shipped/index.html";
+    public const string WeeksDir = "release-notes/weeks";
+    public const string PageFile = "release-notes/index.html";
 
     public static string WeekFileName(WeekWindow window) => $"{WeeksDir}/{window.IsoWeekId}.md";
 
@@ -74,7 +74,7 @@ public static partial class MarkdownWriter
         sb.AppendLine("<html>");
         sb.AppendLine("  <head>");
         sb.AppendLine("      <meta charset=\"utf-8\">");
-        sb.AppendLine("      <title>Shipped - Brandon Chastain</title>");
+        sb.AppendLine("      <title>Release Notes - Brandon Chastain</title>");
         sb.AppendLine("      <link rel=\"stylesheet\" href=\"../css/style.css\">");
         sb.AppendLine("      <meta name=\"viewport\" content=\"width=device-width, initial-scale=1, maximum-scale=1\">");
         sb.AppendLine("      <style>details { margin: 1em 0 1.5em; } summary { cursor: pointer; }</style>");
@@ -82,8 +82,8 @@ public static partial class MarkdownWriter
         sb.AppendLine("  <body>");
         sb.AppendLine("    <div class=\"content col-6\">");
         sb.AppendLine("      <a href=\"../index.html\">Home</a>");
-        sb.AppendLine("      <h3>Shipped</h3>");
-        sb.AppendLine("      <p>A weekly log of what I shipped across my side projects, written by a bot every Sunday from the week's commits and pull requests.</p>");
+        sb.AppendLine("      <h3>Release Notes</h3>");
+        sb.AppendLine("      <p>Weekly release notes for my side projects, written by a bot every Sunday from the week's commits and pull requests.</p>");
         if (ordered.Count == 0)
         {
             sb.AppendLine("      <p><em>Nothing logged yet.</em></p>");
