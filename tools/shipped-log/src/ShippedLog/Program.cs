@@ -37,12 +37,24 @@ else
     var active = await gh.GetActiveReposAsync(window, ct);
     log.WriteLine($"{login}: {active.Count} repo(s) pushed this week.");
     repos = [];
+    var skipped = 0;
     foreach (var (name, url, branch) in active)
     {
-        var activity = await gh.GetActivityAsync(name, url, branch, login, window, ct);
-        log.WriteLine($"  {name}: {activity.Commits.Count} commits, {activity.MergedPullRequests.Count} merged PRs, {activity.Releases.Count} releases");
-        repos.Add(activity);
+        try
+        {
+            var activity = await gh.GetActivityAsync(name, url, branch, login, window, ct);
+            log.WriteLine($"  {name}: {activity.Commits.Count} commits, {activity.MergedPullRequests.Count} merged PRs, {activity.Releases.Count} releases");
+            repos.Add(activity);
+        }
+        catch (HttpRequestException ex)
+        {
+            // Usually a token that can list the repo but not read it. Keep going so one repo never sinks the week.
+            skipped++;
+            log.WriteLine($"  {name}: skipped ({(int?)ex.StatusCode} {ex.StatusCode}). Check the token's repository access and Contents/Pull requests permissions.");
+        }
     }
+    if (skipped > 0 && repos.Count == 0)
+        throw new InvalidOperationException($"Every active repo was skipped ({skipped}); the GitHub token cannot read them.");
 }
 
 // 2. Filter noise, drop repos with nothing left
