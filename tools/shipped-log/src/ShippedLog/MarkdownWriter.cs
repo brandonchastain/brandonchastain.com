@@ -49,6 +49,35 @@ public static partial class MarkdownWriter
         return sb.ToString();
     }
 
+    /// <summary>
+    /// The most recent <paramref name="count"/> week recaps before <paramref name="currentWeekId"/>, newest first,
+    /// with the stats line and the raw-activity block stripped. Fed to the summarizer so it does not repeat itself.
+    /// </summary>
+    public static IReadOnlyList<PriorWeek> ReadPriorWeeks(string siteRoot, string currentWeekId, int count = 3)
+    {
+        var dir = Path.Combine(siteRoot, WeeksDir);
+        if (!Directory.Exists(dir)) return [];
+        return Directory.EnumerateFiles(dir, "*.md")
+            .Select(p => (WeekId: Path.GetFileNameWithoutExtension(p), Path: p))
+            .Where(w => string.CompareOrdinal(w.WeekId, currentWeekId) < 0)
+            .OrderByDescending(w => w.WeekId, StringComparer.Ordinal)
+            .Take(count)
+            .Select(w => new PriorWeek(w.WeekId, Narrative(File.ReadAllText(w.Path))))
+            .Where(w => w.Narrative.Length > 0)
+            .ToList();
+    }
+
+    /// <summary>A week file minus its title, stats line and &lt;details&gt; raw-activity block.</summary>
+    public static string Narrative(string weekMarkdown)
+    {
+        var cut = weekMarkdown.IndexOf("<details>", StringComparison.Ordinal);
+        if (cut >= 0) weekMarkdown = weekMarkdown[..cut];
+        var lines = weekMarkdown.Split('\n')
+            .Where(l => !l.StartsWith("# ", StringComparison.Ordinal))
+            .Where(l => !(l.StartsWith('_') && l.TrimEnd().EndsWith('_')));
+        return string.Join("\n", lines).Trim();
+    }
+
     /// <summary>Extracts the "week in a sentence" line for the notification.</summary>
     public static string OneLiner(string summaryMarkdown)
     {

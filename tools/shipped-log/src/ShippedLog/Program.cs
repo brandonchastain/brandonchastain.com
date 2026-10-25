@@ -86,7 +86,11 @@ if (repos.Count > 0)
     {
         summarizer = new ClaudeSummarizer(apiKey, log);
     }
-    summary = await summarizer.SummarizeAsync(repos, window, ct);
+    // Earlier recaps go in as context so the model does not re-announce work it already covered.
+    var priorWeeks = MarkdownWriter.ReadPriorWeeks(options.Out ?? Directory.GetCurrentDirectory(), window.IsoWeekId);
+    if (priorWeeks.Count > 0)
+        log.WriteLine($"Prior weeks for context: {string.Join(", ", priorWeeks.Select(w => w.WeekId))}");
+    summary = await summarizer.SummarizeAsync(repos, window, priorWeeks, ct);
 }
 
 // 4. Render
