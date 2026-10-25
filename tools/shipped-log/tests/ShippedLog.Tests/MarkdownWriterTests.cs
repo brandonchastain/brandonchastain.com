@@ -89,11 +89,53 @@ public class MarkdownWriterTests
     public void SummaryInputGroupsByRepo()
     {
         var repos = NoiseFilterTests.LoadFixture().Select(NoiseFilter.Apply).Where(r => r.HasShippedWork).ToList();
-        var input = SummaryInput.Build(repos, W42);
+        var input = SummaryInput.Build(repos, W42, []);
         Assert.Contains("# example/alpha", input);
         Assert.Contains("- #42 Relevance scoring for feed items", input);
         Assert.Contains("Deployments: production x1", input);
         Assert.Contains("- v0.1.0 First playable", input);
         Assert.DoesNotContain("example/quiet", input);
+    }
+
+    [Fact]
+    public void SummaryInputCarriesPriorWeeksAsContext()
+    {
+        var repos = NoiseFilterTests.LoadFixture().Select(NoiseFilter.Apply).Where(r => r.HasShippedWork).ToList();
+        var input = SummaryInput.Build(repos, W42, [new PriorWeek("2026-W41", "## example/alpha\n\n- Shipped tags last week.")]);
+        Assert.Contains("do not repeat", input, StringComparison.OrdinalIgnoreCase);
+        Assert.Contains("<prior-week id=\"2026-W41\">", input);
+        Assert.Contains("Shipped tags last week.", input);
+        // The prior block must come before this week's activity so the model reads it as context first.
+        Assert.True(input.IndexOf("Shipped tags last week.", StringComparison.Ordinal)
+                    < input.IndexOf("Week: ", StringComparison.Ordinal));
+    }
+
+    [Fact]
+    public void NarrativeDropsTitleStatsAndRawActivity()
+    {
+        var week = MarkdownWriter.RenderWeek(W42,
+            NoiseFilterTests.LoadFixture().Select(NoiseFilter.Apply).ToList(),
+            "**Week in a sentence:** Did a thing.\n\n## example/alpha\n\n**Fixes**\n\n- Fixed a thing.");
+        var narrative = MarkdownWriter.Narrative(week);
+        Assert.Contains("**Fixes**", narrative);
+        Assert.DoesNotContain("<details>", narrative);
+        Assert.DoesNotContain("PRs merged", narrative);   // the stats line
+        Assert.DoesNotContain("# 2026-W42", narrative);   // the title
+    }
+
+    [Fact]
+    public void PriorWeeksAreTheMostRecentOnesBeforeTheCurrentWeek()
+    {
+        var root = Directory.CreateTempSubdirectory().FullName;
+        var weeks = Path.Combine(root, MarkdownWriter.WeeksDir);
+        Directory.CreateDirectory(weeks);
+        foreach (var id in new[] { "2026-W39", "2026-W40", "2026-W41", "2026-W42", "2026-W43" })
+            File.WriteAllText(Path.Combine(weeks, id + ".md"), $"# {id}\n\n_1 active day_\n\nRecap of {id}.\n");
+
+        var prior = MarkdownWriter.ReadPriorWeeks(root, "2026-W43", count: 3);
+
+        Assert.Equal(["2026-W42", "2026-W41", "2026-W40"], prior.Select(p => p.WeekId));
+        Assert.Equal("Recap of 2026-W42.", prior[0].Narrative);
+        Directory.Delete(root, recursive: true);
     }
 }

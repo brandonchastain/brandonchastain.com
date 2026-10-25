@@ -7,26 +7,71 @@ namespace ShippedLog;
 public interface ISummarizer
 {
     /// <summary>Returns markdown: first line is the "week in a sentence", then per-project sections.</summary>
-    Task<string> SummarizeAsync(IReadOnlyList<RepoActivity> repos, WeekWindow window, CancellationToken ct);
+    /// <param name="priorWeeks">Recent weeks' recaps, newest first, so the model does not repeat them.</param>
+    Task<string> SummarizeAsync(
+        IReadOnlyList<RepoActivity> repos,
+        WeekWindow window,
+        IReadOnlyList<PriorWeek> priorWeeks,
+        CancellationToken ct);
 }
+
+/// <summary>An earlier week's recap, with the raw-activity block already stripped.</summary>
+public sealed record PriorWeek(string WeekId, string Narrative);
 
 /// <summary>Builds the model input and the deterministic fallback. Pure; unit-tested.</summary>
 public static class SummaryInput
 {
     public const string SystemPrompt =
-        "You write a short weekly recap of a developer's side-project work from raw commit and pull request data.\n\n" +
-        "Rules:\n" +
-        "- Start with exactly one line beginning \"**Week in a sentence:**\" that captures the week in one sentence.\n" +
-        "- Then one section per project, heading \"## <repo name>\", in the order given.\n" +
-        "- Under each heading, 2 to 5 bullets. Describe outcomes a user or the developer would notice " +
-        "(for example \"added AI tag suggestions with confirm/reject\"), not file-level changes.\n" +
-        "- Merge related commits into one bullet. Mention releases or deployments when present.\n" +
-        "- Never invent work that is not in the input. If a project's input is thin, write fewer bullets.\n" +
-        "- Plain GitHub-flavored markdown. No preamble, no closing remarks, no headings other than the project ones.";
+        """
+        You write the weekly release notes for a developer's side projects, from raw commit and pull request data.
+        You are writing for a reader who wants to know what changed, not a changelog of every pull request.
 
-    public static string Build(IReadOnlyList<RepoActivity> repos, WeekWindow window)
+        Shape:
+        - Start with exactly one line beginning "**Week in a sentence:**" that captures the week in one sentence.
+        - Then one section per project, heading "## <repo name>", in the order given.
+        - Inside a project section, group the work by category, each on its own bold line followed by its bullets:
+          **New features**, **Improvements**, **Fixes**, **Performance**, **Infrastructure**, **Documentation**.
+          Use only the categories that have real content this week, in that order. Skip the rest; never write an empty one.
+        - 1 to 4 bullets per category, and at most 8 bullets in a project section.
+
+        Synthesis, not enumeration:
+        - Do not write one bullet per pull request. Several pull requests that move the same thing forward are ONE bullet,
+          describing the outcome the reader would notice ("search now matches titles and body text"), not the steps taken.
+        - A bullet is about a change in the product, not about a file, a branch, or a review.
+        - Do not cite pull request numbers or commit hashes; the full list is already linked below the summary.
+        - If a project saw only small scattered work, say so in one bullet rather than listing it all.
+
+        Do not repeat earlier weeks:
+        - You may be given the previous weeks' recaps. They are context only: never restate, rephrase, or re-announce
+          something already covered there, even if this week's input touches it again.
+        - For work that spans weeks, report only what is new since the last recap ("the API login cutover is now live"),
+          and say nothing if nothing visible changed this week.
+        - Ongoing background churn - repeated dependency bumps, recurring deploys, routine test or CI upkeep - is worth
+          mentioning once, when it starts or when it ends, not every week.
+        - Fewer, non-repetitive bullets always beats a full but repetitive section. A project whose only activity this
+          week was already described in an earlier week gets no section at all.
+
+        - Never invent work that is not in the input. If a project's input is thin, write fewer bullets.
+        - Plain GitHub-flavored markdown. No preamble, no closing remarks, no headings other than the project ones.
+        """;
+
+    public static string Build(IReadOnlyList<RepoActivity> repos, WeekWindow window, IReadOnlyList<PriorWeek> priorWeeks)
     {
         var sb = new StringBuilder();
+        if (priorWeeks.Count > 0)
+        {
+            sb.AppendLine("Previously reported (context only - do not repeat any of this):");
+            sb.AppendLine();
+            foreach (var prior in priorWeeks)
+            {
+                sb.AppendLine($"<prior-week id=\"{prior.WeekId}\">");
+                sb.AppendLine(prior.Narrative.Trim());
+                sb.AppendLine("</prior-week>");
+                sb.AppendLine();
+            }
+            sb.AppendLine("End of previous weeks. Everything below is this week's raw activity.");
+            sb.AppendLine();
+        }
         sb.AppendLine($"Week: {window.Start:yyyy-MM-dd} to {window.End.AddDays(-1):yyyy-MM-dd}");
         sb.AppendLine();
         foreach (var repo in repos.Where(r => r.HasShippedWork))
@@ -113,9 +158,13 @@ public sealed class ClaudeSummarizer : ISummarizer
         _log = log;
     }
 
-    public async Task<string> SummarizeAsync(IReadOnlyList<RepoActivity> repos, WeekWindow window, CancellationToken ct)
+    public async Task<string> SummarizeAsync(
+        IReadOnlyList<RepoActivity> repos,
+        WeekWindow window,
+        IReadOnlyList<PriorWeek> priorWeeks,
+        CancellationToken ct)
     {
-        var input = SummaryInput.Build(repos, window);
+        var input = SummaryInput.Build(repos, window, priorWeeks);
         try
         {
             var response = await _client.Messages.Create(new MessageCreateParams
@@ -143,6 +192,10 @@ public sealed class ClaudeSummarizer : ISummarizer
 /// <summary>Used by --no-ai and tests.</summary>
 public sealed class FallbackSummarizer : ISummarizer
 {
-    public Task<string> SummarizeAsync(IReadOnlyList<RepoActivity> repos, WeekWindow window, CancellationToken ct) =>
+    public Task<string> SummarizeAsync(
+        IReadOnlyList<RepoActivity> repos,
+        WeekWindow window,
+        IReadOnlyList<PriorWeek> priorWeeks,
+        CancellationToken ct) =>
         Task.FromResult(SummaryInput.Fallback(repos));
 }
