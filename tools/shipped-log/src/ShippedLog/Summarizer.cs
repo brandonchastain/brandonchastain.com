@@ -182,9 +182,6 @@ public sealed class ClaudeSummarizer : ISummarizer
 {
     public const string DefaultModel = "claude-haiku-5-5";
 
-    /// <summary>Thinking tokens per run. Enough to sort 40 pull requests into categories, not enough to crowd out the summary.</summary>
-    public const int ThinkingBudget = 6000;
-
     private readonly AnthropicClient _client;
     private readonly string _model;
     private readonly TextWriter _log;
@@ -209,11 +206,13 @@ public sealed class ClaudeSummarizer : ISummarizer
             var response = await _client.Messages.Create(new MessageCreateParams
             {
                 Model = _model,
-                // MaxTokens covers thinking and the summary together. Left to itself the model spent the whole
-                // budget thinking and stopped at max_tokens with no text at all, so the budget is pinned and the
-                // cap sits far enough above it to leave room for the write-up.
-                MaxTokens = ThinkingBudget + 8000,
-                Thinking = new ThinkingConfigEnabled { BudgetTokens = ThinkingBudget },
+                // MaxTokens covers thinking and the summary together. At 8000 the model spent the whole budget
+                // thinking and stopped at max_tokens with no text at all, so there is room for both here.
+                // Haiku 5.5 takes no thinking budget (budget_tokens is a 400); effort is the only dial, and
+                // "low" is enough to sort a week's pull requests into categories.
+                MaxTokens = 16000,
+                Thinking = new ThinkingConfigAdaptive(),
+                OutputConfig = new OutputConfig { Effort = Effort.Low },
                 System = SummaryInput.SystemPrompt,
                 Messages = [new() { Role = Role.User, Content = input }],
             }, cancellationToken: ct);
