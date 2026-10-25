@@ -36,7 +36,10 @@ public static class SummaryInput
           **New features**, **Improvements**, **Fixes**, **Performance**, **Reliability**, **Infrastructure**,
           **Documentation**.
           Use only the categories that have real content this week, in that order. Skip the rest; never write an empty one.
-        - 1 to 4 bullets per category, and at most 8 bullets in a project section.
+          Every category that does have content gets its section: a week that shipped features, fixes and a
+          performance win shows all three, however much louder one of them is.
+        - 1 to 4 bullets per category, and at most 10 bullets in a project section. Spend them across the
+          categories rather than on one.
         - **Reliability** is for anything that changes whether the app is up, responding, or keeping people's data:
           availability through a deploy, uptime, data durability, backups and restores, error rates, recovery from a
           failure. Plumbing with no visible effect on any of those is **Infrastructure**. When a piece of
@@ -65,8 +68,10 @@ public static class SummaryInput
           production with 151,000 posts"). Never invent, extrapolate or round a number the input does not give,
           and never convert between units the input did not relate. If a change was not measured, describe the
           outcome in words and give no figure.
-        - A bullet with a real number in it is worth more than three without. If a category is crowded, keep the
-          measured changes and fold the rest into one closing bullet.
+        - Numbers decide how a bullet is written, never whether the work is reported. A visible change with no
+          measurement - a new screen, a fix someone noticed, a setting they asked for - is as much a part of the
+          week as a measured one, and is described in plain words. Do not drop it, and do not drop the category
+          it belongs to, because nothing was measured. Within a crowded category, lead with the measured changes.
 
         Do not repeat earlier weeks:
         - You may be given the previous weeks' recaps. They are context only: never restate, rephrase, or re-announce
