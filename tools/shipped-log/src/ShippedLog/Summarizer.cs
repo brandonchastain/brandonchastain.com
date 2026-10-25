@@ -165,18 +165,24 @@ public sealed class ClaudeSummarizer : ISummarizer
         CancellationToken ct)
     {
         var input = SummaryInput.Build(repos, window, priorWeeks);
+        _log.WriteLine($"Summarizing with {_model}: {input.Length} chars in, {priorWeeks.Count} prior week(s).");
         try
         {
             var response = await _client.Messages.Create(new MessageCreateParams
             {
                 Model = _model,
-                MaxTokens = 4000,
+                MaxTokens = 8000,
                 System = SummaryInput.SystemPrompt,
                 Messages = [new() { Role = Role.User, Content = input }],
             }, cancellationToken: ct);
 
             var text = string.Concat(response.Content.Select(b => b.Value).OfType<TextBlock>().Select(t => t.Text)).Trim();
-            if (text.Length == 0) throw new InvalidOperationException("Model returned no text.");
+            if (text.Length == 0)
+            {
+                var blocks = string.Join(", ", response.Content.Select(b => b.Value?.GetType().Name ?? "null"));
+                throw new InvalidOperationException(
+                    $"Model returned no text (stop reason: {response.StopReason}; blocks: [{blocks}]).");
+            }
             if (!text.Contains("Week in a sentence", StringComparison.OrdinalIgnoreCase))
                 text = "**Week in a sentence:** " + text;
             return text;
