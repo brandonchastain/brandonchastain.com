@@ -33,9 +33,10 @@ public static class SummaryInput
         - Start with exactly one line beginning "**Week in a sentence:**" that captures the week in one sentence.
         - Then one section per project, heading "## <repo name>", in the order given.
         - Inside a project section, group the work by category, each on its own bold line followed by its bullets:
-          **New features**, **Improvements**, **Fixes**, **Performance**, **Reliability**, **Infrastructure**,
+          **New features**, **Improvements**, **Performance**, **Reliability**, **Fixes**, **Infrastructure**,
           **Documentation**.
-          Use only the categories that have real content this week, in that order. Skip the rest; never write an empty one.
+          Use only the categories that have real content this week, and keep them in exactly that order, so a
+          reader who follows the notes week to week always finds the same thing in the same place. Skip the rest; never write an empty one.
           Every category that does have content gets its section: a week that shipped features, fixes and a
           performance win shows all three, however much louder one of them is.
         - 1 to 4 bullets per category, and at most 10 bullets in a project section. Spend them across the
