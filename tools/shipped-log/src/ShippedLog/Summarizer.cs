@@ -44,7 +44,8 @@ public static class SummaryInput
         Bad:  The admin dashboard gained history and deletes, search got faster, sign-in tightened,
               and posts are stored once.   (an inventory, not a judgement)
         Good: Deploys no longer drop requests, now that a new release restores from a live replica.
-        Do not repeat it as the first bullet.
+        Never repeat it as a bullet, anywhere, in any wording. The thing you name here is already reported
+        below; the bullet that covers it stays, and the sentence is your reading of why it mattered.
 
         BULLETS
         Open on the thing the reader sees - a noun or a verb. Never open on a measurement condition.
