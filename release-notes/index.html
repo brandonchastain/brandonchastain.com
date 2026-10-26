@@ -13,8 +13,113 @@
       <h3>Release Notes</h3>
       <p>Weekly release notes for my side projects, written by a bot every Sunday from the week's commits and pull requests.</p>
       <p>
+        <a href="#2026-W43">2026-W43</a> &middot;
         <a href="#2026-W42">2026-W42</a>
       </p>
+      <section id="2026-W43">
+        <h2>2026-W43 (Oct 19 to Oct 25, 2026)</h2>
+        <p><em>5 active days | 2 repos | 47 PRs merged | 7 commits</em></p>
+        <p><strong>Week in a sentence:</strong> Feeds gained a hub, popular-feed suggestions and a longer admin trends range, the database now stores each post once, deploys restore from a continuously replicated copy of the database, and the release-notes bot stopped repeating itself.</p>
+        <h3>brandonchastain/brandonchastain.com</h3>
+        <p><strong>Improvements</strong></p>
+        <ul>
+          <li>Weekly summaries are grouped by category in a fixed order, merge related changes into one outcome each, and report only what is new since the earlier weeks, so long-running work is no longer restated every Sunday.</li>
+        </ul>
+        <p><strong>Fixes</strong></p>
+        <ul>
+          <li>A week whose summary can't be generated now publishes as a plain list with a one-line note, and the model's output budget is raised so a large week no longer runs out before the summary is written.</li>
+        </ul>
+        <h3>brandonchastain/rss-reader</h3>
+        <p><strong>New features</strong></p>
+        <ul>
+          <li>The Feeds page is now a hub of cards, each with its own page. Subscribed feeds show their real titles, tags can be removed, and a Popular feeds list suggests the most-subscribed feeds. New accounts start with five starter feeds.</li>
+          <li>The admin dashboard's trends now span 1 hour to 1 year, with snapshots every few minutes while the app runs. The stat cards open drill-down tables where an admin can delete users, feeds or posts, and Refresh now takes a snapshot immediately. Snapshot retention rose from 30 to 400 days.</li>
+        </ul>
+        <p><strong>Improvements</strong></p>
+        <ul>
+          <li>Microsoft sign-in is now for personal accounts only; work and school accounts are sent back with a message. Sign-in asks only for email, and sessions last 30 days across browser restarts.</li>
+          <li>Each post is stored once per feed instead of copied for every subscriber, with existing data migrated in place. Unsaved posts older than 180 days are removed nightly, and feeds with no subscriber for 7 days are dropped.</li>
+        </ul>
+        <p><strong>Performance</strong></p>
+        <ul>
+          <li>On a 200-user scroll test against a copy of production data, the timeline went from 198 to 798 requests a second, and p95 page load fell from 2,569 ms to 3.7 ms.</li>
+          <li>Search answers from the full-text index: a rare word went from 109 to 216 ms down to 17 to 20 ms. Words that start mid-word, such as "flare" in "cloudflare", no longer match.</li>
+          <li>Scheduled feed refreshes are paced at 10 a second by default. In a 50-requests-a-second test, p95 fell from 513 ms to 30 ms with a 5-a-second budget, and a cycle of 5,000 due feeds stretched from about 80 s to 999 s.</li>
+        </ul>
+        <p><strong>Reliability</strong></p>
+        <ul>
+          <li>The database is replicated continuously to blob storage, and a new revision restores from that copy. A failed restore now restarts the container rather than starting empty. The first deploy on this path had about 117 s of 503s on <code>/api/user</code>; after the fixes, the probe saw no 5xx across 61 samples.</li>
+        </ul>
+        <p><strong>Fixes</strong></p>
+        <ul>
+          <li>Feeds that keep failing back off from 2 minutes to a 6-hour cap, and the backoff now survives restarts. Previously one dead feed was retried every scheduler tick and reached 45 failed fetches in a day. The Feeds page marks such feeds "not updating" and shows the reason.</li>
+          <li>Cross-site requests that change data are refused. The two actions reachable from a plain link are closed: marking a post read via GET is gone, and deleting a feed now uses DELETE.</li>
+        </ul>
+        <details><summary>Raw activity</summary>
+        <p><strong><a href="https://github.com/brandonchastain/brandonchastain.com">brandonchastain/brandonchastain.com</a></strong></p>
+        <ul>
+          <li>PR <a href="https://github.com/brandonchastain/brandonchastain.com/pull/5">#5</a> Release notes: group by category and stop repeating earlier weeks</li>
+          <li><a href="https://github.com/brandonchastain/brandonchastain.com/commit/897931087489397ff18e7a9d20b650b8ee297485"><code>8979310</code></a> Release notes: group by category and stop repeating earlier weeks</li>
+          <li><a href="https://github.com/brandonchastain/brandonchastain.com/commit/4c5c6684ec73729dd0f9dea8abd3bd5adf5bcbd0"><code>4c5c668</code></a> Release notes: say why the model returned no text, and raise the output cap</li>
+          <li><a href="https://github.com/brandonchastain/brandonchastain.com/commit/8f636ce2ec822f559a6b778b1e891654f9331e45"><code>8f636ce</code></a> Release notes: report the impact, and give reliability its own category</li>
+          <li><a href="https://github.com/brandonchastain/brandonchastain.com/commit/f59cdc426fd5b920579f372fe34dde842bcc5583"><code>f59cdc4</code></a> Release notes: a measurement decides how a bullet reads, not whether it ships</li>
+          <li><a href="https://github.com/brandonchastain/brandonchastain.com/commit/13dc102d8866331b8b1d8b20c86015a12696ac73"><code>13dc102</code></a> Release notes: pin the thinking budget so the summary fits in the cap</li>
+          <li><a href="https://github.com/brandonchastain/brandonchastain.com/commit/2557d42e03ee820e32f34ec14b575832f849feb7"><code>2557d42</code></a> Release notes: adaptive thinking and low effort, not a thinking budget</li>
+          <li><a href="https://github.com/brandonchastain/brandonchastain.com/commit/d251644ab2eeaf5c915d9f55b54eff5a9b7957bd"><code>d251644</code></a> Release notes: fix the category order to the one the notes actually read in</li>
+        </ul>
+        <p><strong><a href="https://github.com/brandonchastain/rss-reader">brandonchastain/rss-reader</a></strong></p>
+        <ul>
+          <li>PR <a href="https://github.com/brandonchastain/rss-reader/pull/196">#196</a> chore(durability): remove the Azure Files share path (spec step 5)</li>
+          <li>PR <a href="https://github.com/brandonchastain/rss-reader/pull/195">#195</a> feat(auth): keep the session key ring in blob instead of the share</li>
+          <li>PR <a href="https://github.com/brandonchastain/rss-reader/pull/194">#194</a> feat(feeds): make /feeds a hub of cards with a subpage per choice</li>
+          <li>PR <a href="https://github.com/brandonchastain/rss-reader/pull/193">#193</a> feat(feeds): tabbed Feeds page with titles, Subscribe/Unsubscribe and tag removal</li>
+          <li>PR <a href="https://github.com/brandonchastain/rss-reader/pull/192">#192</a> fix(feeds): always show Popular feeds as a plain top list</li>
+          <li>PR <a href="https://github.com/brandonchastain/rss-reader/pull/191">#191</a> feat(feeds): popular feeds section and starter feeds for new users</li>
+          <li>PR <a href="https://github.com/brandonchastain/rss-reader/pull/190">#190</a> feat(frontend): offer a reload when a newer build is deployed</li>
+          <li>PR <a href="https://github.com/brandonchastain/rss-reader/pull/189">#189</a> chore(auth): retire the Static Web Apps gateway header path</li>
+          <li>PR <a href="https://github.com/brandonchastain/rss-reader/pull/188">#188</a> feat(admin): accurate trends, drill-down tables and admin deletes</li>
+          <li>PR <a href="https://github.com/brandonchastain/rss-reader/pull/187">#187</a> docs: measured handover numbers, actimeo finding, replica chain report</li>
+          <li>PR <a href="https://github.com/brandonchastain/rss-reader/pull/186">#186</a> fix(deploy): drop unsupported mountOptions so #185 can deploy</li>
+          <li>PR <a href="https://github.com/brandonchastain/rss-reader/pull/185">#185</a> fix(durability): fresh replica path, chain report, actimeo (supersedes #183)</li>
+          <li>PR <a href="https://github.com/brandonchastain/rss-reader/pull/184">#184</a> fix(durability): handover follower retry, probe hold, hourly snapshots, gate-aware checks</li>
+          <li>PR <a href="https://github.com/brandonchastain/rss-reader/pull/179">#179</a> feat(durability): rollout step 3, cooperative handover and restore from the Litestream replica (flag on)</li>
+          <li>PR <a href="https://github.com/brandonchastain/rss-reader/pull/180">#180</a> fix(deploy): probe the writer lock with an open so a release is seen within one poll</li>
+          <li>PR <a href="https://github.com/brandonchastain/rss-reader/pull/181">#181</a> obs(durability): make the writer's shutdown sequence visible in prod logs</li>
+          <li>PR <a href="https://github.com/brandonchastain/rss-reader/pull/178">#178</a> fix(durability): make LitestreamSupervisor.DisposeAsync idempotent</li>
+          <li>PR <a href="https://github.com/brandonchastain/rss-reader/pull/177">#177</a> fix(durability): Litestream 0.5.17 and replication back on</li>
+          <li>PR <a href="https://github.com/brandonchastain/rss-reader/pull/175">#175</a> fix(durability): Litestream 0.5.17 and replication back on; remove the restore-drill workflow</li>
+          <li>PR <a href="https://github.com/brandonchastain/rss-reader/pull/176">#176</a> infra(durability): turn blob replication off pending the full-size upload diagnosis</li>
+          <li>PR <a href="https://github.com/brandonchastain/rss-reader/pull/174">#174</a> docs: note the two config changes that halve blob replication cost</li>
+          <li>PR <a href="https://github.com/brandonchastain/rss-reader/pull/173">#173</a> chore(durability): clear analyzer warnings in the new code; label the Azurite test key</li>
+          <li>PR <a href="https://github.com/brandonchastain/rss-reader/pull/171">#171</a> perf(refresh): pace scheduled fetches with a per-second budget</li>
+          <li>PR <a href="https://github.com/brandonchastain/rss-reader/pull/172">#172</a> feat(durability): Litestream replication to blob beside the share (rollout steps 1 and 2)</li>
+          <li>PR <a href="https://github.com/brandonchastain/rss-reader/pull/169">#169</a> test(load): fixed-rate capacity scenarios and a capacity report at the live size</li>
+          <li>PR <a href="https://github.com/brandonchastain/rss-reader/pull/168">#168</a> perf(search): answer from the full-text index; widen only the page that is returned</li>
+          <li>PR <a href="https://github.com/brandonchastain/rss-reader/pull/167">#167</a> fix(feeds): keep backoff across restarts; name the real failure; repair two bad bytes</li>
+          <li>PR <a href="https://github.com/brandonchastain/rss-reader/pull/166">#166</a> perf(timeline): walk the newest-first index instead of sorting every post; refresh load tests</li>
+          <li>PR <a href="https://github.com/brandonchastain/rss-reader/pull/165">#165</a> test(e2e): browser tests of the real stack in CI; surface a refused feed address</li>
+          <li>PR <a href="https://github.com/brandonchastain/rss-reader/pull/164">#164</a> chore(config): one-line docs per option, drop dead settings, fix docs</li>
+          <li>PR <a href="https://github.com/brandonchastain/rss-reader/pull/163">#163</a> ci: post-deploy sign-in smoke check; a failed sign-in returns to the frontend</li>
+          <li>PR <a href="https://github.com/brandonchastain/rss-reader/pull/162">#162</a> chore: retire the Static Web Apps Functions proxy; fix the local-run stack</li>
+          <li>PR <a href="https://github.com/brandonchastain/rss-reader/pull/161">#161</a> feat(feeds): show when a feed has stopped updating, and why</li>
+          <li>PR <a href="https://github.com/brandonchastain/rss-reader/pull/160">#160</a> test(admin): make the CaptureNow test independent of clock resolution</li>
+          <li>PR <a href="https://github.com/brandonchastain/rss-reader/pull/159">#159</a> fix(admin): lay the trends chart out on a real time axis</li>
+          <li>PR <a href="https://github.com/brandonchastain/rss-reader/pull/158">#158</a> chore(config): drop the unused ServerHostName setting</li>
+          <li>PR <a href="https://github.com/brandonchastain/rss-reader/pull/157">#157</a> feat(admin): add a 1h trends range; ranges are named keys</li>
+          <li>PR <a href="https://github.com/brandonchastain/rss-reader/pull/156">#156</a> feat(admin): "Refresh now" button that takes a stats snapshot immediately</li>
+          <li>PR <a href="https://github.com/brandonchastain/rss-reader/pull/155">#155</a> feat(admin): switch the trends chart between 1d, 7d, 30d and 1y</li>
+          <li>PR <a href="https://github.com/brandonchastain/rss-reader/pull/154">#154</a> fix(auth): let the providers' sign-in callback POST through the CSRF guard</li>
+          <li>PR <a href="https://github.com/brandonchastain/rss-reader/pull/153">#153</a> fix(auth): personal Microsoft accounts only, CSRF guard, rate limits</li>
+          <li>PR <a href="https://github.com/brandonchastain/rss-reader/pull/152">#152</a> feat(db): store posts once with per-user state, migrating in place</li>
+          <li>PR <a href="https://github.com/brandonchastain/rss-reader/pull/151">#151</a> test(api): add HTTP contract tests for the API as it behaves today</li>
+          <li>PR <a href="https://github.com/brandonchastain/rss-reader/pull/150">#150</a> fix(auth): request only openid + email from Microsoft and Google</li>
+          <li>PR <a href="https://github.com/brandonchastain/rss-reader/pull/149">#149</a> fix(auth): keep people signed in between visits</li>
+          <li>PR <a href="https://github.com/brandonchastain/rss-reader/pull/148">#148</a> chore(ship): validate the backend on the API domain, not the SWA proxy</li>
+          <li>Deployed to production (20x)</li>
+        </ul>
+        </details>
+      </section>
+      <hr/>
       <section id="2026-W42">
         <h2>2026-W42 (Oct 12 to Oct 18, 2026)</h2>
         <p><em>4 active days | 2 repos | 32 PRs merged | 7 commits</em></p>
