@@ -220,10 +220,11 @@ public sealed class ClaudeSummarizer : ISummarizer
                 // MaxTokens covers thinking and the summary together. At 8000 the model spent the whole budget
                 // thinking and stopped at max_tokens with no text at all, so there is room for both here.
                 // Haiku 5.5 takes no thinking budget (budget_tokens is a 400); effort is the only dial, and
-                // "low" is enough to sort a week's pull requests into categories.
+                // medium is its own default. Deciding what a week's work amounts to - what leads, what merges,
+                // what is left out - is judgement, which is what effort buys.
                 MaxTokens = 16000,
                 Thinking = new ThinkingConfigAdaptive(),
-                OutputConfig = new OutputConfig { Effort = Effort.Low },
+                OutputConfig = new OutputConfig { Effort = Effort.Medium },
                 System = SummaryInput.SystemPrompt,
                 Messages = [new() { Role = Role.User, Content = input }],
             }, cancellationToken: ct);
