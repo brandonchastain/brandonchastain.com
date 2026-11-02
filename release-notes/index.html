@@ -18,145 +18,77 @@
         <a href="#2026-W42">2026-W42</a>
       </p>
       <section id="2026-W44">
-        <h2>2026-W44 (Oct 26 to Nov 1, 2026)</h2>
-        <p><em>7 active days | 4 repos | 11 PRs merged | 42 commits</em></p>
-        <p><strong>Week in a sentence:</strong> The replica's stalled compaction is sidestepped by dropping two levels, which cuts the point-in-time restore window from a day to three to four hours.</p>
-        <h3>brandonchastain/brandonchastain.com</h3>
+        <h2>2026-W44 (Oct 25 to Oct 31, 2026)</h2>
+        <p><em>4 active days | 2 repos | 21 PRs merged | 11 commits</em></p>
+        <p><strong>Week in a sentence:</strong> rss-reader's durability move is finished: the old file share is gone and startup restores only from the blob replica, which is now the only copy of your data; brandonchastain.com got a rewritten release-notes bot.</p>
+        <h3>brandonchastain.com</h3>
         <p><strong>Improvements</strong></p>
         <ul>
-          <li>Weekly summaries are tighter, with shorter bullets and no notes about the release-notes tooling itself.</li>
+          <li>Release-note bullets are shorter and each covers one outcome: a dry run of 2026-W43 averaged 22.6 words a bullet, down from 42.8.</li>
         </ul>
-        <h3>brandonchastain/resume-workshop</h3>
-        <p><strong>Documentation</strong></p>
-        <ul>
-          <li>Interview stories cover DHS ownership, the withdrawn-watchdog work and the August 2026 outages, with a target company list.</li>
-          <li>The DHS origin is corrected: Jon did the low-level design, and Brandon implemented it and became sole owner.</li>
-          <li>Overclaims are trimmed from the workshop docs, keeping the facts and useful framing.</li>
-        </ul>
-        <h3>brandonchastain/rss-reader</h3>
+        <h3>rss-reader</h3>
         <p><strong>New features</strong></p>
         <ul>
-          <li>Headlines open the post in the reader in place; ctrl/cmd-click or middle-click still opens the original.</li>
-          <li>Post lists take vim keys: j and k move, l opens, h closes, m marks read, and ? lists them all.</li>
-          <li>The [Aa] control sets the body font (mono, serif or sans) and size from 80% to 160%, remembered in this browser.</li>
+          <li>Clicking a headline opens the post in the reader in place, and the original is one click away at ↗.</li>
+          <li>Post lists take vim keys: j and k move, l or Enter opens, m marks read, and ? shows the full list.</li>
         </ul>
         <p><strong>Improvements</strong></p>
         <ul>
-          <li>Excerpt-only posts link to the original from the foot of the reader, where they used to end.</li>
-          <li>The sign-in screen names Microsoft and says the app works on phone and desktop.</li>
-        </ul>
-        <p><strong>Performance</strong></p>
-        <ul>
-          <li>The API fits 0.25 vCPU and 0.5 GiB, the smallest always-on size, after the move to .NET 10 and a 32 MB cap on caches.</li>
-          <li>Refreshes no longer cache the content of every post, so only posts someone opens are cached.</li>
+          <li>Open tabs show a Reload banner when a newer build deploys, instead of running the old version until a hard refresh.</li>
         </ul>
         <p><strong>Reliability</strong></p>
         <ul>
-          <li>An anonymous feed-freshness endpoint reports how long ago the newest post was stored, so a silent feed stall can alert.</li>
-          <li>Replica compaction had stalled for 26 hours, so the stuck levels are removed until a fixed Litestream ships; restores are unchanged.</li>
-          <li>Replica history is kept three hours instead of a day, cutting replica storage from 8.7 GB to an expected 0.9 to 1.4 GB, at the cost of a restore window of three to four hours.</li>
+          <li>A stalled feed no longer goes unnoticed: an anonymous health check reports how old the newest stored post is and how many feeds are failing.</li>
+          <li>The replica keeps three hours of history instead of 24, so it should shrink from 8.7 GB to roughly 0.9 to 1.4 GB, at the cost of a point-in-time restore window of three to four hours instead of a day.</li>
         </ul>
         <p><strong>Fixes</strong></p>
         <ul>
-          <li>NASA's APOD feed at its new address parses again; a missing space in its root tag had broken it.</li>
-          <li>Collapsing a post no longer marks it read, so mark unread sticks while the post stays open.</li>
-          <li>Around 1024px the toolbar no longer overlaps the nav links; Privacy moves to Account.</li>
+          <li>Collapsing an open post no longer marks it read, so a mark-unread made while it was open sticks.</li>
         </ul>
         <p><strong>Infrastructure</strong></p>
         <ul>
-          <li>Storage accepts only the app's managed identity, so account keys and key-signed links stop working; laptop <code>az storage</code> calls need <code>--auth-mode login</code>.</li>
-          <li>The unused read-replica app is removed, leaving the writer as the only app.</li>
-        </ul>
-        <h3>brandonchastain/vitals</h3>
-        <p><strong>New features</strong></p>
-        <ul>
-          <li>One binary runs as the server, with the API, scheduler and dashboard, or as an agent that pushes its checks.</li>
-          <li>A UPS check is amber on battery or low runtime, and red when NUT cannot see the UPS, since nothing then shuts the NAS down cleanly.</li>
-        </ul>
-        <p><strong>Improvements</strong></p>
-        <ul>
-          <li>Each component gets one tile wherever its checks run, naming the hosts that report it.</li>
-          <li>A check can name the tile it depends on; while that tile is down, its dependents show unreachable rather than red.</li>
-          <li>The refresh toggle (1 s, 5 s, 30 s or off) swaps the page content in place and is remembered per browser.</li>
-        </ul>
-        <p><strong>Reliability</strong></p>
-        <ul>
-          <li>An agent counts as gone after 2.5 times its fastest reporting gap, so one outage no longer turns three tiles three colours.</li>
-        </ul>
-        <p><strong>Fixes</strong></p>
-        <ul>
-          <li>The Pi agent's service starts again; an inline comment in its systemd unit had stopped it.</li>
-        </ul>
-        <p><strong>Infrastructure</strong></p>
-        <ul>
-          <li>SNMP is removed; the NAS agent reads its memory and swap directly, so no SNMP user or password is kept.</li>
+          <li>Sign-in cookie keys now live in blob storage, and the first boot copied them over, so nobody was signed out.</li>
+          <li>Self-hosters must now put the database on a mounted volume, since the whole-file backup is gone.</li>
         </ul>
         <details><summary>Raw activity</summary>
         <p><strong><a href="https://github.com/brandonchastain/brandonchastain.com">brandonchastain/brandonchastain.com</a></strong></p>
         <ul>
           <li>PR <a href="https://github.com/brandonchastain/brandonchastain.com/pull/7">#7</a> Release notes: run at Haiku's default effort</li>
           <li>PR <a href="https://github.com/brandonchastain/brandonchastain.com/pull/6">#6</a> Release notes: cut the wordiness and rewrite the prompt</li>
+          <li>PR <a href="https://github.com/brandonchastain/brandonchastain.com/pull/5">#5</a> Release notes: group by category and stop repeating earlier weeks</li>
+          <li><a href="https://github.com/brandonchastain/brandonchastain.com/commit/897931087489397ff18e7a9d20b650b8ee297485"><code>8979310</code></a> Release notes: group by category and stop repeating earlier weeks</li>
+          <li><a href="https://github.com/brandonchastain/brandonchastain.com/commit/4c5c6684ec73729dd0f9dea8abd3bd5adf5bcbd0"><code>4c5c668</code></a> Release notes: say why the model returned no text, and raise the output cap</li>
+          <li><a href="https://github.com/brandonchastain/brandonchastain.com/commit/8f636ce2ec822f559a6b778b1e891654f9331e45"><code>8f636ce</code></a> Release notes: report the impact, and give reliability its own category</li>
+          <li><a href="https://github.com/brandonchastain/brandonchastain.com/commit/f59cdc426fd5b920579f372fe34dde842bcc5583"><code>f59cdc4</code></a> Release notes: a measurement decides how a bullet reads, not whether it ships</li>
+          <li><a href="https://github.com/brandonchastain/brandonchastain.com/commit/13dc102d8866331b8b1d8b20c86015a12696ac73"><code>13dc102</code></a> Release notes: pin the thinking budget so the summary fits in the cap</li>
+          <li><a href="https://github.com/brandonchastain/brandonchastain.com/commit/2557d42e03ee820e32f34ec14b575832f849feb7"><code>2557d42</code></a> Release notes: adaptive thinking and low effort, not a thinking budget</li>
+          <li><a href="https://github.com/brandonchastain/brandonchastain.com/commit/d251644ab2eeaf5c915d9f55b54eff5a9b7957bd"><code>d251644</code></a> Release notes: fix the category order to the one the notes actually read in</li>
           <li><a href="https://github.com/brandonchastain/brandonchastain.com/commit/328d5164cabe38f0fa525d874fa3fd6ed142e501"><code>328d516</code></a> Release notes: cut the wordiness and the four slop patterns</li>
           <li><a href="https://github.com/brandonchastain/brandonchastain.com/commit/b33bfa83380ab8f6e142717600081f1bb1906874"><code>b33bfa8</code></a> Release notes: rewrite the prompt against release-notes style conventions</li>
           <li><a href="https://github.com/brandonchastain/brandonchastain.com/commit/0239239ee9cbb350f9edfd2b3afcc4a411fe1af6"><code>0239239</code></a> Release notes: run at Haiku's default effort, not below it</li>
           <li><a href="https://github.com/brandonchastain/brandonchastain.com/commit/dad3201c1f90f307b4a0fc9bf2de98ce397d869e"><code>dad3201</code></a> Release notes: the week-in-a-sentence may not reappear as any bullet</li>
         </ul>
-        <p><strong><a href="https://github.com/brandonchastain/resume-workshop">brandonchastain/resume-workshop</a></strong></p>
-        <ul>
-          <li><a href="https://github.com/brandonchastain/resume-workshop/commit/d56946a2aef34336eb1147b571ae92542c92a838"><code>d56946a</code></a> Add DHS interview stories and target company list</li>
-          <li><a href="https://github.com/brandonchastain/resume-workshop/commit/d097549366c83ef0f1ddd2cf8dd817a50b4d4610"><code>d097549</code></a> Correct DHS origin in career narrative</li>
-          <li><a href="https://github.com/brandonchastain/resume-workshop/commit/c8f75d106d840f345c4eeb748b400f0ddcfc4817"><code>c8f75d1</code></a> Trim overclaims across workshop docs</li>
-          <li><a href="https://github.com/brandonchastain/resume-workshop/commit/27e628354e128d1b875b4b44c701416b5d68963a"><code>27e6283</code></a> Note Health Agent as Brandon's first DHS component</li>
-          <li><a href="https://github.com/brandonchastain/resume-workshop/commit/a3ecb82b77228c55e063190a77a3124161bd5df0"><code>a3ecb82</code></a> Add LDS RM client to Brandon's first DHS components</li>
-          <li><a href="https://github.com/brandonchastain/resume-workshop/commit/5903cf7fd0b3ec329fe5b88b53f901fc3ddc01d5"><code>5903cf7</code></a> Describe LDS RM client as part of the Health Agent</li>
-          <li><a href="https://github.com/brandonchastain/resume-workshop/commit/c70df0bb05dea8bd745ef4a9f673fc4ecd25bb6a"><code>c70df0b</code></a> Add withdrawn-watchdog design story and rationale</li>
-          <li><a href="https://github.com/brandonchastain/resume-workshop/commit/a944b1693aafd7bd9561d3f515f7a420cea451f4"><code>a944b16</code></a> Add action items file with withdrawn-watchdog research task</li>
-          <li><a href="https://github.com/brandonchastain/resume-workshop/commit/585abf2dfdf4bf6bb2a7c3db6ff394b84f2a982e"><code>585abf2</code></a> Record before/after impact of withdrawn watchdog (night Sev2s)</li>
-          <li><a href="https://github.com/brandonchastain/resume-workshop/commit/033e0809bc133572a20169a2340c705e024ac745"><code>033e080</code></a> Add concrete fault examples to the fault model story</li>
-          <li><a href="https://github.com/brandonchastain/resume-workshop/commit/c84fa2899c555bbf0a6f3cf72e08c3758b82cf70"><code>c84fa28</code></a> Expand watchdog story to the three-stage paging evolution</li>
-          <li><a href="https://github.com/brandonchastain/resume-workshop/commit/9669f7d06be646acd8b44d17c82898b6701ad8ea"><code>9669f7d</code></a> Add Sev3 deprioritization and fleet-scale growth to watchdog story</li>
-          <li><a href="https://github.com/brandonchastain/resume-workshop/commit/c209d92872e49e970b7d1ec0378b8090dbf5e43b"><code>c209d92</code></a> Add serving-plane QPS growth; flag QPS figures to reconcile</li>
-          <li><a href="https://github.com/brandonchastain/resume-workshop/commit/5c16998446babb6320e445d367ee39e4f5cddc1c"><code>5c16998</code></a> Converge global QPS figure on ~32M across docs</li>
-        </ul>
         <p><strong><a href="https://github.com/brandonchastain/rss-reader">brandonchastain/rss-reader</a></strong></p>
         <ul>
-          <li>PR <a href="https://github.com/brandonchastain/rss-reader/pull/205">#205</a> chore(litestream): drop L2/L3 levels, soft-limit Go memory</li>
-          <li>PR <a href="https://github.com/brandonchastain/rss-reader/pull/204">#204</a> fix(feeds): parse feeds whose root tag is missing a space between attributes</li>
-          <li>PR <a href="https://github.com/brandonchastain/rss-reader/pull/203">#203</a> chore: .NET 10, and fit the API in 0.25 vCPU / 0.5 GiB</li>
           <li>PR <a href="https://github.com/brandonchastain/rss-reader/pull/202">#202</a> fix(test): stop AddFeed test leaking a subscription into Bob's search</li>
           <li>PR <a href="https://github.com/brandonchastain/rss-reader/pull/201">#201</a> feat(api): anonymous feed-freshness endpoint for the Health Service</li>
           <li>PR <a href="https://github.com/brandonchastain/rss-reader/pull/200">#200</a> feat(reader): headline opens the reader, vim keys, text options</li>
           <li>PR <a href="https://github.com/brandonchastain/rss-reader/pull/199">#199</a> chore: remove the read-replica (reader) app</li>
           <li>PR <a href="https://github.com/brandonchastain/rss-reader/pull/198">#198</a> chore(storage): turn off shared-key access on the storage account</li>
           <li>PR <a href="https://github.com/brandonchastain/rss-reader/pull/197">#197</a> chore(litestream): keep three hours of replica history instead of 24</li>
-          <li>Deployed to production (18x)</li>
-        </ul>
-        <p><strong><a href="https://github.com/brandonchastain/vitals">brandonchastain/vitals</a></strong></p>
-        <ul>
-          <li><a href="https://github.com/brandonchastain/vitals/commit/fcb701e51d70fb253114ebb250d0363b8f1f675e"><code>fcb701e</code></a> Scaffold the Health Service P0 (codename vitals)</li>
-          <li><a href="https://github.com/brandonchastain/vitals/commit/5635b0d8427f596e7f6870e9e63697f03bbfe421"><code>5635b0d</code></a> Pi agent: fix the systemd unit, ship logging settings; NAS: restart the server on config changes</li>
-          <li><a href="https://github.com/brandonchastain/vitals/commit/08496453f56179329f208660ea7b672d92f3ce61"><code>0849645</code></a> Drop the pihole.ftl check; the DNS checks already cover FTL</li>
-          <li><a href="https://github.com/brandonchastain/vitals/commit/68535902de1ee906113329549f6cb06a15a81998"><code>6853590</code></a> Add set-nas-snmp.ps1: prompt for SNMP passwords and write them to the NAS agent</li>
-          <li><a href="https://github.com/brandonchastain/vitals/commit/a572212026f95ec1ae55b5dc75b9c68ccc3b4349"><code>a572212</code></a> Show nas.reachable on the QNAP NAS tile</li>
-          <li><a href="https://github.com/brandonchastain/vitals/commit/591cd8c1182ff6c6f7bad4193ee705464812162e"><code>591cd8c</code></a> Drop SNMP for the NAS; read its memory and swap from the agent's container</li>
-          <li><a href="https://github.com/brandonchastain/vitals/commit/1c058dbd89183042dbe304b8f9de77f0fef71228"><code>1c058db</code></a> Dashboard: agent cards hold their own checks, live refresh toggle; add router ping</li>
-          <li><a href="https://github.com/brandonchastain/vitals/commit/cf8f5133ca2a2e21b6ad2054bbe5b8ad9600c029"><code>cf8f513</code></a> Config: list each agent's checks under that agent</li>
-          <li><a href="https://github.com/brandonchastain/vitals/commit/2c27677d473ff88d07b794674a3aea982170fc40"><code>2c27677</code></a> Config: www and static-DNS checks, Pi reachability from the NAS; add 'validate' command</li>
-          <li><a href="https://github.com/brandonchastain/vitals/commit/eaf2f06efb2754417f91540cd0be6aacb4a7528c"><code>eaf2f06</code></a> Remove SNMP</li>
-          <li><a href="https://github.com/brandonchastain/vitals/commit/844fdec6fdefa9fe791c75b000531625254f26e8"><code>844fdec</code></a> update config order etc</li>
-          <li><a href="https://github.com/brandonchastain/vitals/commit/41f187ded4806ec6c541c92ccb7ef6063e15b59e"><code>41f187d</code></a> Dashboard follows checks.yaml order</li>
-          <li><a href="https://github.com/brandonchastain/vitals/commit/8011df085513d7d6b99bc0b4d416bf5d69e7b1b8"><code>8011df0</code></a> Replace the built-in Internet rollup with explicit dependsOn</li>
-          <li><a href="https://github.com/brandonchastain/vitals/commit/4b681ecd6044d8fe77c4134911e7b83697a36b24"><code>4b681ec</code></a> An agent's silence limit follows its fastest check</li>
-          <li><a href="https://github.com/brandonchastain/vitals/commit/67f8e7b342ba8c460f7c9527e188a2cb4d6e21c5"><code>67f8e7b</code></a> Revert "An agent's silence limit follows its fastest check"</li>
-          <li><a href="https://github.com/brandonchastain/vitals/commit/2614a1d08fd753e3c3325e3cb616397002868ff1"><code>2614a1d</code></a> Reapply "An agent's silence limit follows its fastest check"</li>
-          <li><a href="https://github.com/brandonchastain/vitals/commit/288f282c2f65754a75a2471dc50d0b38b6669fd0"><code>288f282</code></a> update config</li>
-          <li><a href="https://github.com/brandonchastain/vitals/commit/0b73e149fc0be0ce9ab60739825be658711f68d4"><code>0b73e14</code></a> update config</li>
-          <li><a href="https://github.com/brandonchastain/vitals/commit/2e062d11eb9a59fdfa31a001763993125efb396b"><code>2e062d1</code></a> config</li>
-          <li><a href="https://github.com/brandonchastain/vitals/commit/9539c5a8afbaf49d943673dce88805838a40127d"><code>9539c5a</code></a> Desktop agent: Windows service, scheduled-task check, drive checks; ping 1.1.1.1 for Internet</li>
-          <li><a href="https://github.com/brandonchastain/vitals/commit/99a18d018cb4c09b42a20096f0b2c67d47f66fbd"><code>99a18d0</code></a> Unified dashboard tiles, TLS expiry checks, dead-man ping, redundant Internet</li>
-          <li><a href="https://github.com/brandonchastain/vitals/commit/5e4631b9d4a577c0fba03246e59cdf434a106d95"><code>5e4631b</code></a> Cleaner dashboard tiles; reload the page after a deploy</li>
-          <li><a href="https://github.com/brandonchastain/vitals/commit/922f8681c0b98a0a922befe4cbb9cb65682d57f7"><code>922f868</code></a> UPS check, restart detection, and a calmer NAS swap tile</li>
-          <li><a href="https://github.com/brandonchastain/vitals/commit/a935fb7f16259dac28b7ae171fb9a46c31c2bc38"><code>a935fb7</code></a> abc</li>
+          <li>PR <a href="https://github.com/brandonchastain/rss-reader/pull/196">#196</a> chore(durability): remove the Azure Files share path (spec step 5)</li>
+          <li>PR <a href="https://github.com/brandonchastain/rss-reader/pull/195">#195</a> feat(auth): keep the session key ring in blob instead of the share</li>
+          <li>PR <a href="https://github.com/brandonchastain/rss-reader/pull/194">#194</a> feat(feeds): make /feeds a hub of cards with a subpage per choice</li>
+          <li>PR <a href="https://github.com/brandonchastain/rss-reader/pull/193">#193</a> feat(feeds): tabbed Feeds page with titles, Subscribe/Unsubscribe and tag removal</li>
+          <li>PR <a href="https://github.com/brandonchastain/rss-reader/pull/192">#192</a> fix(feeds): always show Popular feeds as a plain top list</li>
+          <li>PR <a href="https://github.com/brandonchastain/rss-reader/pull/191">#191</a> feat(feeds): popular feeds section and starter feeds for new users</li>
+          <li>PR <a href="https://github.com/brandonchastain/rss-reader/pull/190">#190</a> feat(frontend): offer a reload when a newer build is deployed</li>
+          <li>PR <a href="https://github.com/brandonchastain/rss-reader/pull/189">#189</a> chore(auth): retire the Static Web Apps gateway header path</li>
+          <li>PR <a href="https://github.com/brandonchastain/rss-reader/pull/188">#188</a> feat(admin): accurate trends, drill-down tables and admin deletes</li>
+          <li>PR <a href="https://github.com/brandonchastain/rss-reader/pull/187">#187</a> docs: measured handover numbers, actimeo finding, replica chain report</li>
+          <li>PR <a href="https://github.com/brandonchastain/rss-reader/pull/186">#186</a> fix(deploy): drop unsupported mountOptions so #185 can deploy</li>
+          <li>PR <a href="https://github.com/brandonchastain/rss-reader/pull/185">#185</a> fix(durability): fresh replica path, chain report, actimeo (supersedes #183)</li>
+          <li>Deployed to production (14x)</li>
         </ul>
         </details>
       </section>
