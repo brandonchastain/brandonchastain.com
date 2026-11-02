@@ -98,7 +98,7 @@ public class NoiseFilterTests
         Assert.Contains("PR [#42]", rawPart);
         Assert.DoesNotContain("Bump Microsoft.Data.Sqlite", md);
         Assert.DoesNotContain("quiet-repo", md);
-        Assert.Equal("3 commits and 1 merged PR across 2 repos.", MarkdownWriter.OneLiner(summary));
+        Assert.Equal("3 commits and 1 merged PR in alpha and beta.", MarkdownWriter.OneLiner(summary));
     }
 
     internal static List<RepoActivity> LoadFixture()
