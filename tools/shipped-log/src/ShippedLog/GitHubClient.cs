@@ -24,14 +24,14 @@ public sealed class GitHubClient
         return user!["login"]!.GetValue<string>();
     }
 
-    /// <summary>Repos owned by the authenticated user with a push inside the window.</summary>
+    /// <summary>Public repos owned by the authenticated user with a push inside the window.</summary>
     public async Task<List<(string Name, string Url, string DefaultBranch)>> GetActiveReposAsync(WeekWindow window, CancellationToken ct)
     {
         var result = new List<(string, string, string)>();
         for (var page = 1; page <= 10; page++)
         {
             var repos = await GetJsonAsync(
-                $"user/repos?affiliation=owner&sort=pushed&direction=desc&per_page=100&page={page}", ct) as JsonArray;
+                $"user/repos?affiliation=owner&visibility=public&sort=pushed&direction=desc&per_page=100&page={page}", ct) as JsonArray;
             if (repos is null || repos.Count == 0) break;
 
             var olderThanWindow = false;
@@ -40,6 +40,9 @@ public sealed class GitHubClient
                 var pushed = repo!["pushed_at"]?.GetValue<DateTimeOffset>();
                 if (pushed is null || pushed < window.Start) { olderThanWindow = true; continue; }
                 if (repo["fork"]?.GetValue<bool>() == true) continue;
+                // The release notes page is public, so private work never belongs on it. visibility=public
+                // above should already have excluded these; this is the check that guarantees it.
+                if (IsPrivate(repo)) continue;
                 result.Add((
                     repo["full_name"]!.GetValue<string>(),
                     repo["html_url"]!.GetValue<string>(),
@@ -155,6 +158,14 @@ public sealed class GitHubClient
         response.EnsureSuccessStatusCode();
         await using var stream = await response.Content.ReadAsStreamAsync(ct);
         return await JsonNode.ParseAsync(stream, cancellationToken: ct);
+    }
+
+    /// <summary>True unless the repo says it is public. A missing or unreadable flag counts as private.</summary>
+    internal static bool IsPrivate(JsonNode? repo)
+    {
+        if (repo?["private"]?.GetValue<bool>() != false) return true;
+        var visibility = repo["visibility"]?.GetValue<string>();
+        return visibility is not null && !visibility.Equals("public", StringComparison.OrdinalIgnoreCase);
     }
 
     internal static (string Subject, string Body) SplitMessage(string message)

@@ -8,7 +8,7 @@ and pings my phone via ntfy.
 
 ## How it works
 
-1. `GitHubClient` lists my repos pushed in the last 7 days and pulls commits on the default branch (authored by me), merged PRs, releases and deployments.
+1. `GitHubClient` lists my **public** repos pushed in the last 7 days (the page is public, so private repos never reach it) and pulls commits on the default branch (authored by me), merged PRs, releases and deployments.
 2. `NoiseFilter` drops merge commits, Dependabot/Renovate bumps, formatting-only commits, and squash-merge commits that duplicate a listed PR.
 3. `ClaudeSummarizer` sends the remaining items, grouped by repo, to `claude-haiku-5-5` with the prompt rules in `Summarizer.cs`. If the call fails it falls back to a plain list.
 4. `MarkdownWriter` renders the week file, then rebuilds the site page from every file in `release-notes/weeks/` so the page is always the full archive, newest first. Quiet weeks still get a file so the log has no gaps, but no notification.

@@ -30,8 +30,9 @@ public static class SummaryInput
         The reader wants to know what changed, in under a minute.
 
         FORMAT
-        - One line: **Week in a sentence:** followed by the single most consequential thing that shipped.
-          One main clause, 25 words at most.
+        - One line: **Week in a sentence:** followed by the single most consequential thing that shipped
+          and the project it shipped in. One main clause of 30 words at most, plus the optional trailing
+          clause described under WEEK IN A SENTENCE.
         - Then one section per project, heading "## <repo name>", in the order given.
         - Inside each, bold category lines in exactly this order, skipping any with no content:
           **New features**, **Improvements**, **Performance**, **Reliability**, **Fixes**,
@@ -40,12 +41,25 @@ public static class SummaryInput
         - Plain GitHub-flavored markdown. No preamble, no closing remarks, no other headings.
 
         WEEK IN A SENTENCE
-        Pick one thing and say what it does for the reader. The rest is in the sections below.
+        Name the project, then say what shipped in it and what that does for the reader. A reader who
+        knows none of these projects must still be able to tell which one changed. Use the repo's own
+        name without the owner prefix - rss-reader, not brandonchastain/rss-reader.
         Bad:  The admin dashboard gained history and deletes, search got faster, sign-in tightened,
-              and posts are stored once.   (an inventory, not a judgement)
-        Good: Deploys no longer drop requests, now that a new release restores from a live replica.
-        Never repeat it as a bullet, anywhere, in any wording. The thing you name here is already reported
-        below; the bullet that covers it stays, and the sentence is your reading of why it mattered.
+              and posts are stored once.   (an inventory, not a judgement, and no project named)
+        Bad:  Deploys no longer drop requests, now that a new release restores from a live replica.
+              (says what changed but never says where - the reader cannot place it)
+        Good: rss-reader rides out its own deploys, restoring from a live replica instead of dropping
+              requests.
+        When other projects also saw work, close with one short trailing clause naming each of them and
+        what it got, a few words apiece. This is the only list allowed in the sentence, it covers no
+        project twice, and it stays shorter than the main clause.
+        Good: rss-reader rides out its own deploys, restoring from a live replica instead of dropping
+              requests; bTetris got working scoring and the site got a hikes page.
+        Name only projects that have a section below, and name every project that has one.
+        Never repeat the main clause as a bullet, anywhere, in any wording. The thing you name there is
+        already reported below; the bullet that covers it stays, and the sentence is your reading of why
+        it mattered. The trailing clause is a pointer, not a report: the projects it names keep their
+        bullets, which say more than it does.
 
         BULLETS
         Open on the thing the reader sees - a noun or a verb. Never open on a measurement condition.
@@ -165,7 +179,14 @@ public static class SummaryInput
         var sb = new StringBuilder();
         var prs = active.Sum(r => r.MergedPullRequests.Count);
         var commits = active.Sum(r => r.Commits.Count);
-        sb.AppendLine($"**Week in a sentence:** {commits} commit{Plural(commits)} and {prs} merged PR{Plural(prs)} across {active.Count} repo{Plural(active.Count)}.");
+        var names = active.Select(r => ShortName(r.Name)).ToList();
+        var where = names.Count switch
+        {
+            0 => "no projects",
+            1 => names[0],
+            _ => string.Join(", ", names.Take(names.Count - 1)) + " and " + names[^1],
+        };
+        sb.AppendLine($"**Week in a sentence:** {commits} commit{Plural(commits)} and {prs} merged PR{Plural(prs)} in {where}.");
         sb.AppendLine();
         sb.AppendLine("_AI summary unavailable this week; the full list is under Raw activity below._");
         sb.AppendLine();
@@ -181,6 +202,13 @@ public static class SummaryInput
     }
 
     private static string Plural(int n) => n == 1 ? "" : "s";
+
+    /// <summary>"brandonchastain/rss-reader" -> "rss-reader".</summary>
+    internal static string ShortName(string fullName)
+    {
+        var slash = fullName.LastIndexOf('/');
+        return slash < 0 ? fullName : fullName[(slash + 1)..];
+    }
 
     private static string Truncate(string s, int max)
     {
