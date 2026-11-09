@@ -13,10 +13,70 @@
       <h3>Release Notes</h3>
       <p>Weekly release notes for my side projects, written by a bot every Sunday from the week's commits and pull requests.</p>
       <p>
+        <a href="#2026-W45">2026-W45</a> &middot;
         <a href="#2026-W44">2026-W44</a> &middot;
         <a href="#2026-W43">2026-W43</a> &middot;
         <a href="#2026-W42">2026-W42</a>
       </p>
+      <section id="2026-W45">
+        <h2>2026-W45 (Nov 2 to Nov 8, 2026)</h2>
+        <p><em>7 active days | 2 repos | 11 PRs merged | 0 commits</em></p>
+        <p><strong>Week in a sentence:</strong> rss-reader's new accounts now see their posts on the first visit, not an empty list until a refresh; brandonchastain.com kept private repos off its release notes page.</p>
+        <h3>brandonchastain.com</h3>
+        <p><strong>Fixes</strong></p>
+        <ul>
+          <li>Private repos no longer appear on the release notes page. Any repo not marked public is treated as private.</li>
+          <li>The published 2026-W44 page still names two private repos until its workflow is re-run.</li>
+        </ul>
+        <p><strong>Improvements</strong></p>
+        <ul>
+          <li>Each week's sentence names the project that changed first, with other projects as a short trailing clause.</li>
+        </ul>
+        <h3>rss-reader</h3>
+        <p><strong>Fixes</strong></p>
+        <ul>
+          <li>The first fetch on a new account waits for registration and retries, so the first visit no longer comes up empty.</li>
+          <li>Deleting your account signs you out. Before, the page quietly created a fresh account with starter feeds.</li>
+          <li>Cancelling GitHub sign-in returns you to the app instead of an error page.</li>
+        </ul>
+        <p><strong>Improvements</strong></p>
+        <ul>
+          <li>Post rows are tighter and even, each 81 px tall at desktop width, down from about 104 px.</li>
+          <li>Reader actions sit on one line under the body, and row controls are icon buttons that fill green when on.</li>
+          <li>The privacy page names Google, Microsoft and GitHub as sign-in providers and links their privacy policies.</li>
+        </ul>
+        <p><strong>Reliability</strong></p>
+        <ul>
+          <li>Blob replication runs every 30 minutes instead of every 30 seconds, so a hard crash can lose up to 30 minutes of writes. Planned deploys still lose none.</li>
+          <li>A timeline that fails to load shows "Couldn't load posts" with a Retry button, after retrying transient errors.</li>
+          <li>Two requests creating the same new account at once no longer fail with a server error.</li>
+        </ul>
+        <p><strong>Infrastructure</strong></p>
+        <ul>
+          <li>Background storage work runs less often, with replica checks every 5 minutes and handover polls every 10 seconds, cutting blob-storage calls and letting more seconds bill as idle. A deploy can now wait up to 10 seconds before handing over.</li>
+        </ul>
+        <details><summary>Raw activity</summary>
+        <p><strong><a href="https://github.com/brandonchastain/brandonchastain.com">brandonchastain/brandonchastain.com</a></strong></p>
+        <ul>
+          <li>PR <a href="https://github.com/brandonchastain/brandonchastain.com/pull/8">#8</a> Release notes: exclude private repos, name projects in the week sentence</li>
+        </ul>
+        <p><strong><a href="https://github.com/brandonchastain/rss-reader">brandonchastain/rss-reader</a></strong></p>
+        <ul>
+          <li>PR <a href="https://github.com/brandonchastain/rss-reader/pull/216">#216</a> fix(timeline): full title on an open post; visible ellipsis when clamped</li>
+          <li>PR <a href="https://github.com/brandonchastain/rss-reader/pull/215">#215</a> fix(timeline): even, tighter post-row spacing</li>
+          <li>PR <a href="https://github.com/brandonchastain/rss-reader/pull/214">#214</a> fix(ui): open post's date no longer clipped by the row above</li>
+          <li>PR <a href="https://github.com/brandonchastain/rss-reader/pull/213">#213</a> UI cleanup: quieter rows, one-line reader actions, phone toolbar row, icon buttons</li>
+          <li>PR <a href="https://github.com/brandonchastain/rss-reader/pull/212">#212</a> docs(privacy): name Google as a sign-in provider</li>
+          <li>PR <a href="https://github.com/brandonchastain/rss-reader/pull/211">#211</a> fix(auth): GitHub sign-in failures return to the app; privacy page names GitHub</li>
+          <li>PR <a href="https://github.com/brandonchastain/rss-reader/pull/209">#209</a> fix(account): delete account ends the session; admins can't self-delete</li>
+          <li>PR <a href="https://github.com/brandonchastain/rss-reader/pull/208">#208</a> fix(timeline): load posts on a new account's first visit, and say when a load fails</li>
+          <li>PR <a href="https://github.com/brandonchastain/rss-reader/pull/207">#207</a> chore(durability): Litestream uploads every 30 min instead of hourly</li>
+          <li>PR <a href="https://github.com/brandonchastain/rss-reader/pull/206">#206</a> chore(durability): hourly Litestream uploads and slower blob polling, for cost</li>
+          <li>Deployed to production (20x)</li>
+        </ul>
+        </details>
+      </section>
+      <hr/>
       <section id="2026-W44">
         <h2>2026-W44 (Oct 25 to Oct 31, 2026)</h2>
         <p><em>4 active days | 2 repos | 21 PRs merged | 11 commits</em></p>
